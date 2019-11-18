@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>John Plakon</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom fonts for this template -->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+  <!-- Custom styles for this template -->
+  <link href="css/clean-blog.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="index.html"></a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="about.html">About</a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="contact.html">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('img/post-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+            <h1>Predicting flight delays with Machine Learning</h1>
+            <h2 class="subheading">The challenge of smoothly managing the disruption of flight delays has longed weighed on airline and airport executives’ minds. How could you stare into a crystal ball and determine which flights would be delayed and by how long?</h2>
+            <span class="meta">Posted by
+              <a href="#">John Plakon</a>
+              on November 15, 2019</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p>In this project, I use machine learning techniques such as Logistic Regression, Linear Regression, Random Forest, and Neural Network to predict arrival and departure delays of all of the major airlines during the first quarter of 2018.</p>
+          <p><a href="https://github.com/johnplakon/TheBlueAngels">Check out this project's github page for more detail on the code.</a></p>
+          <h2 class="section-heading">Logistic Regression</h2>
+<p>The Logistic Regression Analysis produced some interesting results. A rather simplified model using 10 featured for departure delays produced a fantastic model with an R2 of 95.86%, while this same model using departure delays over 15 minutes produced a model R2 of 99%!</p>
+
+<p>The same cannot be said with regards to arrival delays. The best R2 that could be achieved was 88.54% using a model with 18 features. While this is not bad, a 90% R2 would be prefered. To make things worse, this model produced a R2 of 78.36% when used for arrival delays over 15 minutes. Many models were tested but the 18 feature model produced the best R2. It is unfortunate that it had the opposite effect when arrival delays of 15 minutes was used.</p>
+          <a href="#">
+          <img class="img-fluid" src="img/log.png" alt="">
+          </a>
+          <span class="caption text-muted"></span>
+          <h2 class="section-heading">Decision Trees</h2>
+			<p>Random Forest and Decision Trees did not end up being useful for this dataset. 14 Models were tested and those 14, 13 produced an R2 less than 85%. Not terrible, but not nothing to inspire confidence for predictions.</p>
+
+<p> The one model to break the cycle was prediction Departure Delays that were 15 minutes or more. Utilizing the previous best model with 18 features, this model produced an R2 of 98.665%, by far the best score of any model tested of all the different procedures so far.</p>
+          <a href="#">
+            <img class="img-fluid" src="img/dt.png" alt="">
+          </a>
+          <span class="caption text-muted"></span>
+         <h2 class="section-heading">Linear Modelling</h2>
+			<p>It is interesting to see that a model using 19 variables that are a mix of numeric and dummy variables produced very good prediction models for both departure and arrival delay times. However, dropping some the of the sparsely populated variables such as Carrier_delay while adding dummy variables for weekdays completely ruined the model. R2 scores for the model dropped from >.95 to <.40.</p>
+          <a href="#">
+            <img class="img-fluid" src="img/lin.png" alt="">
+          </a>
+         <h2 class="section-heading">Stochastic Gradient Descent Classification</h2>
+			<p>SGD Classifying provided perhaps the most insightful look of any of the machine learning techniques that were tested with the flight delay data. It was a great tool to stumble upon as it can work great with scaling and pca while taking under 10 seconds for a binary logistic model to be fit.</p>
+
+<p>SGD is quite intense. While looking further into the theory behind it, it does a bit of the reverse of Stochastic Gradient Boosting. While the first 2 letters mean the same, the last one stands for Descending as it works the loss function in a descending way to smooth over potential errors through each model iteration (instead of an increasing the loss function).</p>
+
+<p>The most concrete conclusion that can be made here is that we have found the best model for predicting if a flight will be delayed by 15 or more minutes. Utilizing 10 features (with all of them outside of wheels off being pretty reliable to track), this model consistently produced an R2 of 99% over 4 different machine learning techniques (Decision Trees, Stochastic Gradient Boosting, SGDClassifying as well as straight up Logisitic regression). Unfortunately, neither of the other two departure delay variables (straight up departure delays and departure delays split into 3 categories) could match these results. It was ultimately determined that in order to make good models for them, they would have to rely on information that would be impossible to consistently get for them (such as arrival time and the arrival delay dummy being significant for the 3 category departure delay model). In conclusion, departure delays of 15+ minutes will be the final variable used out of the 3 for departure delay predictions.</p>
+
+<p>Unfortunately, as per usual, the models used for arrival delays were not up to the same standard. The best score produced was 83.73% for arrival delays over 15 minutes with 33 features. The final push for this project will be to figure out a model to break that glass ceiling of 90% for arrival delays.</p>
+          <a href="#">
+          <img class="img-fluid" src="img/sgdc.png" alt="">
+          </a>
+          <h2 class="section-heading">Stochastic Gradient Boosting</h2>
+			<p>Stochastic Gradient Boosting has some pretty nice effects with our flight delay data. For departure delays, our best model utilized 10 features with delays of 15+ minutes which produced another great R2 score, this time at 99%!. SGB with scaling provided another excellent model for departure delays.</p>
+
+<p> However, arrival delays once again fell short of this standard. While better than any previous machine learning methods outside of straigh linear/logistic regression, the best R2 score achieved was 88.96% which was found with a model for arrival departures of 15+ minutes with 26 features. While 88.96% is not bad, a threshold of 90% at the minimum is preferred so other methods will have to be tried to finally achieve this.</p>
+          <a href="#">
+          <img class="img-fluid" src="img/sgb.png" alt="">
+          </a>
+          <span class="caption text-muted"></span>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <hr>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            <li class="list-inline-item">
+              <a href="#">
+              </a>
+            </li>
+            <li class="list-inline-item">
+              <a href="#">
+              </a>
+            </li>
+            <li class="list-inline-item">
+              <a href="https://github.com/johnplakon">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy; John Plakon 2019</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="js/clean-blog.min.js"></script>
+
+</body>
+
+</html>
