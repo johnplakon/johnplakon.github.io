@@ -1,0 +1,2 @@
+# johnplakon.github.io
+blog
