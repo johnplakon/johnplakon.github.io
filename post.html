@@ -115,7 +115,90 @@
           <img class="img-fluid" src="img/sgb.png" alt="">
           </a>
           <span class="caption text-muted"></span>
+          <h2 class="section-heading">Best Arrival Delay Models</h2>
+			<p>Unfortunately, arrival delay predictions were nowhere near the quality of their departure delay counterparts. Perhaps this is due to the extra variance which can be seen when departure/arrival delays bar graphs are compared side by side.</p>
 
+<p>Like departure delays, arrival delay were tested in 3 scenarios:</p>
+			<ol><li>Arrival Delays</li>
+
+			<li>Arrival Delays over 15 minutes</li>
+
+		    <li>Arrival Delays broken up into 3 subcategories:    <ul>
+      <li>Flight On Time</li>
+      <li>Flight Delayed less than or equal to 15 minutes</li>
+				<li>Flight Delayed over 15 minutes.</li></ul></li></ol>
+<p>While a model for departure delays of over 15 minutes was consistently producing an R2 score over 99%, the best outcome among the 3 scenarios was arrival delays over 15 minutes which produced an R2 score just under 71%. More work would have to be done with this model to improve its prediction accuracy.</p>
+<p>While the linear models yielded good results, the categorical model once again fell short, this time producing an R2 score of just over 51%. Perhaps it could be concluded that using a true/false variable outcome would work best for predicting both departure and arrival delays as both of those models held up the best with predictions against real data.</p>
+			
+          <a href="#">
+          <img class="img-fluid" src="img/ad.png" alt="">
+          </a>
+          <span class="caption text-muted"></span>
+          <h2 class="section-heading">Best Departure Delay Models</h2>
+			<p>All 3 scenarios were tested for departure delay predictions:</p>
+
+			<ol><li>Departure Delays</li>
+
+			<li>Departure Delays over 15 minutes</li>
+
+		    <li>Departure Delays broken up into 3 subcategories:    <ul>
+      <li>Flight On Time</li>
+      <li>Flight Delayed less than or equal to 15 minutes</li>
+				<li>Flight Delayed over 15 minutes.</li></ul></li></ol>
+<p>While the linear model held up, only the logistic model for delays over 15 minutes produced a similar R2 score to its testing R2 score as both were over 99%! Testing this further, departure delays over 15 minutes were tested specifically for United Airlines and a similar score of 99% was produced. Good to see that we were able to determine a consistent model after various machine learning techniques were applied.</p>
+<p>For this model, 10 features were found to be sufficient for predictions of departure delay over 15 minutes:</p>
+<ol><li> Day of the Month
+
+</li><li> Month
+
+</li><li> Scheduled Departure Time
+
+</li><li> Departure Time of Day Dummy Variable (morning, afternoon or night flight
+
+</li><li> Weekday Dummy Variable
+
+</li><li> Airline Dummy Variable
+
+</li><li> Flight Number
+
+</li><li> Time to Taxi out to runway
+
+</li><li> Time when the flight actually takes off (aka wheels off the ground
+
+</li><li> Weather Delay Dummy Variable</li>
+		  </ol>
+<p>Unfortunately, the categorical model did not hold up as it would end up with a R2 score of just under 58%. It would seem more work would have to be done to find a model that worked when having more than 2 possible outcomes.</p>
+			
+          <a href="#">
+          <img class="img-fluid" src="img/dd.png" alt="">
+          </a>
+          <span class="caption text-muted"></span>
+          <h2 class="section-heading">Improvement Models</h2>
+			<p>Here we will try to improve upon the remaining 3 models which have not hit at least 90% accuracy. The 6 models tested are:</p>
+
+<ol><li> Departure Delays -> 95.86%
+
+</li><li> Departure Delays Over 15 Minutes -> 99%
+
+</li><li> Departure Delays in 3 Categories: On Time, Delays under 15 Minutes, Delays over 15 Minutes -> 70.52%
+
+</li><li> Arrival Delays -> 95.37%
+
+</li><li> Arrival Delays Over 15 Minutes -> 83.73%
+
+</li><li> Arrival Delays in 3 Categories: On Time, Delays under 15 Minutes, Delays over 15 Minutes -> 85.86%
+	</li></ol>
+          <a href="#">
+          <img class="img-fluid" src="img/im.png" alt="">
+          </a>
+          <span class="caption text-muted"></span>
+          <h2 class="section-heading">Conclusions</h2>
+			<p>The great challenge for predicting data is to determine what variables work best for a specific model. Of the many models tested, our best results in terms of prediction accuracy using the real data from the second quarter came from predicting departure delays of over 15 minutes using Scaled Stochastic Gradient Descending + Priciple Component Anaylsis. This model provided 99% accuracy with predictions while producing results with 500,000+ rows of data in under 5 minutes.</p>
+		  <p>Through the many techniques tried, Stochastic Gradient Descending was the best in terms of time and consistency with our models. It took about a fifth of the time that the other complex techniques took to finish. These methods included K nearest neighbors, Support Vector Machine Regression and a Neural Network however they did not produce any models that provided better results in a timely matter as their models took over an hour to fully process. We also tested out many different basic linear regression models which proved to be the best fit for simple predictions of second quarter data.</p>
+<a href="#">
+        <img class="img-fluid" src="img/conc.png" alt="">
+        </a>
+          <span class="caption text-muted"></span>
         </div>
       </div>
     </div>
