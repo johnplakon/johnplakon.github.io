@@ -143,7 +143,6 @@
   <p>
     To understand the primary reasons behind reservation cancellations, we can utilize the cancellation_reason column. Let's query the dataset to identify the top cancellation reasons:
   </p>
-<div class="box">
   <pre><code>
 SELECT cancellation_reason, COUNT(*) AS cancellation_count
 FROM reservations
@@ -151,7 +150,6 @@ WHERE reservation_status = 'Canceled' AND cancellation_reason IS NOT NULL
 GROUP BY cancellation_reason
 ORDER BY cancellation_count DESC;
   </code></pre>
-</div>
   <p>
     The SQL code above retrieves the cancellation reason along with the count of occurrences, filtering only canceled reservations with a specified cancellation reason. This query will help us identify the most common causes for cancellations.
   </p>
