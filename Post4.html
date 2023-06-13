@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>John Plakon</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom fonts for this template -->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+  <!-- Custom styles for this template -->
+  <link href="css/clean-blog.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="index.html"></a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="about.html">About</a>
+          </li>
+          <li class="nav-item"> </li>
+          <li class="nav-item">
+            <a class="nav-link" href="Portfolio.html">Portfolio</a>
+          </li>
+          <li class="nav-item"> </li>
+          <li class="nav-item">
+            <a class="nav-link" href="contact.html">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('img/bg3.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+            <h1>Analyzing Traveler Trip Data using R</h1>
+            <h2 class="subheading">Analyzing travel patterns, preferences, and behaviors of different types of travelers</h2>
+            <span class="meta">Posted by
+              <a href="#">John Plakon</a>
+              on June 25, 2022</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+
+  <p>Are you curious about travel patterns, preferences, and behaviors of different types of travelers? Do you want to understand the factors that influence their choices, such as accommodation type, transportation mode, and trip duration? Look no further! In this blog post, we will dive into a fascinating dataset that provides detailed information on various trips taken by travelers. We will use R to analyze the data, extract insights, and uncover interesting trends. Let's get started!</p>
+
+  <h2 class="section-heading">Understanding the Dataset</h2>
+
+  <p>The dataset we'll be working with contains the following columns:</p>
+
+  <ul>
+    <li><strong>Trip ID:</strong> A unique identifier for each trip taken by a traveler.</li>
+    <li><strong>Destination:</strong> The name of the city or country visited by the traveler.</li>
+    <li><strong>Start date:</strong> The date the traveler started the trip.</li>
+    <li><strong>End date:</strong> The date the traveler ended the trip.</li>
+    <li><strong>Duration (days):</strong> The number of days the traveler spent on the trip.</li>
+    <li><strong>Traveler name:</strong> The name of the traveler.</li>
+    <li><strong>Traveler age:</strong> The age of the traveler at the time of the trip.</li>
+    <li><strong>Traveler gender:</strong> The gender of the traveler.</li>
+    <li><strong>Traveler nationality:</strong> The nationality of the traveler.</li>
+    <li><strong>Accommodation type:</strong> The type of accommodation the traveler stayed in, such as hotel, hostel, or
+      Airbnb.</li>
+    <li><strong>Accommodation cost:</strong> The cost of the accommodation for the entire trip.</li>
+    <li><strong>Transportation type:</strong> The mode of transportation used by the traveler, such as plane, train, or
+      car.</li>
+    <li><strong>Transportation cost:</strong> The cost of transportation for the entire trip.</li>
+  </ul>
+
+  <h2 class="section-heading">Loading the Dataset</h2>
+
+  <p>To begin, let's load the dataset into R and take a quick look at its structure. We'll use the <code>read.csv()</code>
+    function to read the CSV file:</p>
+
+  <pre><code># Load the dataset
+  travel_data &lt;- read.csv("path/to/dataset.csv")
+
+  # Display the structure of the dataset
+  str(travel_data)
+  </code></pre>
+
+  <h2 class="section-heading">Exploratory Data Analysis</h2>
+
+  <p>Now that we have the dataset loaded, let's perform some exploratory data analysis to gain insights into the travel
+    data. We'll answer questions such as:</p>
+
+  <ul>
+    <li>What are the most popular travel destinations?</li>
+    <li>What is the average trip duration?</li>
+    <li>What are the common types of accommodations and transportation modes chosen by travelers?</li>
+    <li>Are there any notable cost variations based on travel factors?</li>
+  </ul>
+
+  <p>Let's dive into the code:</p>
+
+  <pre><code># Install required packages
+  install.packages("ggplot2")
+  install.packages("dplyr")
+
+  # Load required packages
+  library(ggplot2)
+  library(dplyr)
+
+  # Top 5 most popular travel destinations
+  top_destinations &lt;- travel_data %>%
+    group_by(Destination) %>%
+    summarise(Total_Trips = n()) %>%
+    arrange(desc(Total_Trips)) %>%
+    head(5)
+
+  # Bar plot of top destinations
+  ggplot(top_destinations, aes(x = reorder(Destination, -Total_Trips), y = Total_Trips)) +
+    geom_bar(stat = "identity", fill = "steelblue") +
+    labs(title = "Top 5 Travel Destinations", x = "Destination", y = "Total Trips") +
+    theme_bw()
+
+  # Average trip duration
+  average_duration &lt;- mean(travel_data$Duration)
+
+  # Print the average trip duration
+  cat("Average Trip Duration:", round(average_duration, 2), "days\n")
+
+  # Accommodation type distribution
+  accommodation_distribution &lt;- travel_data %>%
+    group_by(Accommodation_type) %>%
+    summarise(Total_Trips = n())
+
+  # Pie chart of accommodation type distribution
+  ggplot(accommodation_distribution, aes(x = "", y = Total_Trips, fill = Accommodation_type)) +
+    geom_bar(stat = "identity", width = 1, color = "white") +
+    coord_polar("y", start = 0) +
+    labs(title = "Accommodation Type Distribution") +
+    theme_void()
+
+  # Transportation type distribution
+  transportation_distribution &lt;- travel_data %>%
+    group_by(Transportation_type) %>%
+    summarise(Total_Trips = n())
+
+  # Pie chart of transportation type distribution
+  ggplot(transportation_distribution, aes(x = "", y = Total_Trips, fill = Transportation_type)) +
+    geom_bar(stat = "identity", width = 1, color = "white") +
+    coord_polar("y", start = 0) +
+    labs(title = "Transportation Type Distribution") +
+    theme_void()
+
+  # Average accommodation cost by destination
+  average_cost_by_destination &lt;- travel_data %>%
+    group_by(Destination) %>%
+    summarise(Average_Cost = mean(Accommodation_cost, na.rm = TRUE))
+
+  # Bar plot of average accommodation cost by destination
+  ggplot(average_cost_by_destination, aes(x = reorder(Destination, -Average_Cost), y = Average_Cost)) +
+    geom_bar(stat = "identity", fill = "steelblue") +
+    labs(title = "Average Accommodation Cost by Destination", x = "Destination", y = "Average Cost") +
+    theme_bw()
+  </code></pre>
+
+  <h2 class="section-heading">Conclusion</h2>
+
+  <p>In this blog post, we explored the traveler trip dataset using R. We analyzed the data to identify popular travel
+    destinations, average trip duration, distribution of accommodation and transportation types, and variations in
+    accommodation costs by destination. The insights gained from this analysis can be valuable for travel-related
+    businesses, allowing them to tailor their marketing strategies and create personalized travel packages that cater to
+    the preferences of different types of travelers.</p>
+
+  <p>Remember, travel patterns and preferences are constantly evolving, and analyzing datasets like this can help us stay
+    updated with the latest trends. So, go ahead and leverage the power of data analysis to unlock new opportunities in
+    the travel industry!</p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <hr>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            <li class="list-inline-item">
+              <a href="#">
+              </a>
+            </li>
+            <li class="list-inline-item">
+              <a href="#">
+              </a>
+            </li>
+            <li class="list-inline-item"> <a href="https://www.linkedin.com/in/john-plakon-35695499/"> <span class="fa-stack fa-lg"> <em class="fas fa-circle fa-stack-2x"></em> <em class="fab fa-linkedin fa-stack-1x fa-inverse"></em> </span> </a> </li>
+            <li class="list-inline-item">
+              <a href="https://github.com/johnplakon">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy; John Plakon 2019</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="js/clean-blog.min.js"></script>
+
+</body>
+
+</html>
