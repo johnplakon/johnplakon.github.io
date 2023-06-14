@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>John Plakon</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom fonts for this template -->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+  <!-- Custom styles for this template -->
+  <link href="css/clean-blog.min.css" rel="stylesheet">
+    <style>
+
+    code {
+      font-family: Consolas, monospace;
+      font-size: 14px;
+      background-color: #f5f5f5;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="index.html"></a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="about.html">About</a>
+          </li>
+          <li class="nav-item"> </li>
+          <li class="nav-item">
+            <a class="nav-link" href="Portfolio.html">Portfolio</a>
+          </li>
+          <li class="nav-item"> </li>
+          <li class="nav-item">
+            <a class="nav-link" href="contact.html">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('img/bg5.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+            <h1>Analyzing Marketing A/B Testing</h1>
+            <h2 class="subheading">: Unveiling the Impact of Ads Using Python</h2>
+            <span class="meta">Posted by
+              <a href="#">John Plakon</a>
+              on December 7, 2020</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+
+  <h2 class="section-heading">Introduction</h2>
+  <p>
+    In today's highly competitive market, marketing companies strive to run successful campaigns that yield optimal results. However, with numerous options available, determining the most effective marketing strategy can be challenging. To address this, marketing teams often turn to A/B testing, a randomized experimentation process that allows them to compare multiple versions of a variable, such as a web page, banner, or page element, and measure their impact on business metrics.
+  </p>
+
+  <p>
+    In this blog post, we will delve into an insightful marketing A/B testing dataset obtained from Kaggle. Our objective is to answer two fundamental questions: Firstly, would the campaign be successful? And secondly, if the campaign was successful, how much of that success could be attributed to the ads? To accomplish this, we will employ Python, a versatile programming language widely used for data analysis and machine learning.
+  </p>
+
+  <h2 class="section-heading">Understanding the Dataset</h2>
+  <p>
+    Before we begin our analysis, let's gain a comprehensive understanding of the dataset. This particular dataset provides us with valuable information about user behavior, campaign groups, conversions, and ad exposure. Here are the key features:
+  </p>
+
+  <ul>
+    <li>Index: Row index</li>
+    <li>user id: User ID (unique)</li>
+    <li>test group: If "ad" the person saw the advertisement, if "psa" they only saw the public service announcement</li>
+    <li>converted: If a person bought the product then True, else is False</li>
+    <li>total ads: Amount of ads seen by person</li>
+    <li>most ads day: Day that the person saw the biggest amount of ads</li>
+    <li>most ads hour: Hour of day that the person saw the biggest amount of ads</li>
+  </ul>
+
+  <p>
+    By analyzing this dataset, we aim to gain insights into the success of the marketing campaign, quantify the impact of ads on conversions, and determine whether any statistically significant differences exist between the experimental and control groups.
+  </p>
+
+  <h2 class="section-heading">Importing the Required Libraries</h2>
+  <p>
+    To get started with our analysis, we need to import the necessary libraries in Python. Let's import Pandas for data manipulation, Matplotlib and Seaborn for data visualization, and Scipy for statistical analysis. We can achieve this by executing the following lines of code:
+  </p>
+
+  <pre><code>import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.stats import ttest_ind
+  </code></pre>
+
+  <h2 class="section-heading">Data Preprocessing and Exploration</h2>
+  <p>
+    Before diving into the core analysis, we must preprocess and explore the dataset to gain a better understanding of its structure and identify any potential issues. This process typically involves handling missing values, checking for data integrity, and performing descriptive statistical analysis.
+  </p>
+
+  <p>
+    Let's start by loading the dataset into a Pandas DataFrame and inspecting the first few rows using the <code>head()</code> function:
+  </p>
+
+  <pre><code>data = pd.read_csv('marketing_data.csv')
+print(data.head())
+  </code></pre>
+
+  <p>
+    Next, we'll assess the dataset's dimensions, check for missing values, and examine the data types of each feature:
+  </p>
+
+  <pre><code>print("Dataset Dimensions:", data.shape)
+print("\nMissing Values:\n", data.isnull().sum())
+print("\nData Types:\n", data.dtypes)
+  </code></pre>
+
+  <p>
+    After verifying the dataset's integrity, we can proceed with exploratory data analysis (EDA). EDA involves generating descriptive statistics, visualizing the distributions of various features, and identifying potential correlations. Through EDA, we can uncover patterns, outliers, and gain insights into the characteristics of the experimental and control groups.
+  </p>
+
+  <p>
+    For instance, we might want to examine the distribution of conversions in the two groups and visualize the relationship between the total number of ads viewed and conversion rates. We can achieve this using Python's visualization libraries:
+  </p>
+
+  <pre><code># Distribution of conversions in the experimental and control groups
+plt.figure(figsize=(10, 6))
+sns.countplot(x='converted', hue='test group', data=data)
+plt.title('Distribution of Conversions')
+plt.xlabel('Conversion')
+plt.ylabel('Count')
+plt.legend(title='Test Group')
+plt.show()
+
+# Relationship between total ads viewed and conversion rates
+plt.figure(figsize=(10, 6))
+sns.boxplot(x='converted', y='total ads', data=data)
+plt.title('Total Ads Viewed vs. Conversion')
+plt.xlabel('Conversion')
+plt.ylabel('Total Ads Viewed')
+plt.show()
+  </code></pre>
+
+  <h2 class="section-heading">Statistical Analysis and Hypothesis Testing</h2>
+  <p>
+    To determine the statistical significance of our findings, we can perform hypothesis testing between the experimental and control groups. One commonly used test is the independent samples t-test, which allows us to compare the means of two groups and determine whether they are significantly different.
+  </p>
+
+  <p>
+    To conduct the t-test, we first need to define our null and alternative hypotheses:
+  </p>
+
+  <ul>
+    <li>Null Hypothesis (H0): There is no significant difference in conversion rates between the experimental and control groups.</li>
+    <li>Alternative Hypothesis (H1): There is a significant difference in conversion rates between the experimental and control groups.</li>
+  </ul>
+
+  <p>
+    We can then calculate the p-value, which indicates the probability of observing the data if the null hypothesis is true. A low p-value suggests that the observed difference is statistically significant.
+  </p>
+
+  <p>
+    Let's conduct an independent samples t-test using Python's <code>ttest_ind()</code> function:
+  </p>
+
+  <pre><code>experimental_group = data[data['test group'] == 'ad']['converted']
+control_group = data[data['test group'] == 'psa']['converted']
+
+t_statistic, p_value = ttest_ind(experimental_group, control_group)
+
+print("T-Statistic:", t_statistic)
+print("P-Value:", p_value)
+  </code></pre>
+
+  <h2 class="section-heading">Interpreting the Results and Conclusion</h2>
+  <p>
+    Based on the calculated t-statistic and p-value, we can interpret the results of our hypothesis test. If the p-value is below a predetermined significance level (e.g., 0.05), we reject the null hypothesis and conclude that there is a significant difference in conversion rates between the experimental and control groups.
+  </p>
+
+  <p>
+    Furthermore, we can quantify the impact of ads on conversions by analyzing the conversion rates and exploring potential correlations with other variables. This analysis can provide valuable insights into the effectiveness of marketing campaigns and inform decision-making processes for future campaigns.
+  </p>
+
+  <h2 class="section-heading">Conclusion</h2>
+  <p>
+    In this blog post, we explored the fascinating world of A/B testing in the marketing domain. We leveraged a comprehensive marketing A/B testing dataset and performed an in-depth analysis using Python. By employing statistical techniques, we quantified the impact of ads on conversions and assessed the statistical significance of our findings.
+  </p>
+
+  <p>
+    Through the power of Python and data analysis, marketing professionals can gain valuable insights into the success of their campaigns, optimize their strategies, and make data-driven decisions. A/B testing serves as a crucial tool for assessing the effectiveness of marketing variables, enabling companies to maximize their impact and drive business metrics.
+  </p>
+
+  <p>
+    Remember, when conducting A/B tests, it is important to consider factors beyond the dataset, such as sample size, test duration, and potential confounding variables. Nevertheless, by embracing data-driven methodologies and employing Python's analytical capabilities, marketers can gain a competitive edge in the ever-evolving landscape of digital marketing.
+  </p>
+
+  <p>
+    Happy testing and data exploration!
+  </p>
+
+  <h2 class="section-heading">References</h2>
+  <ul>
+    <li>
+      <a href="https://www.kaggle.com/faviovaz/marketing-ab-testing">Link to the Kaggle dataset</a>
+    </li>
+    <li>
+      <a href="https://pandas.pydata.org/docs/">Pandas Documentation</a>
+    </li>
+    <li>
+      <a href="https://matplotlib.org/stable/contents.html">Matplotlib Documentation</a>
+    </li>
+    <li>
+      <a href="https://seaborn.pydata.org/tutorial.html">Seaborn Documentation</a>
+    </li>
+    <li>
+      <a href="https://docs.scipy.org/doc/scipy/reference/index.html">Scipy Documentation</a>
+    </li>
+  </ul>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <hr>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            <li class="list-inline-item">
+              <a href="#">
+              </a>
+            </li>
+            <li class="list-inline-item">
+              <a href="#">
+              </a>
+            </li>
+            <li class="list-inline-item"> <a href="https://www.linkedin.com/in/john-plakon-35695499/"> <span class="fa-stack fa-lg"> <em class="fas fa-circle fa-stack-2x"></em> <em class="fab fa-linkedin fa-stack-1x fa-inverse"></em> </span> </a> </li>
+            <li class="list-inline-item">
+              <a href="https://github.com/johnplakon">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy; John Plakon 2019</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="js/clean-blog.min.js"></script>
+
+</body>
+
+</html>
