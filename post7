@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>John Plakon</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom fonts for this template -->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+  <!-- Custom styles for this template -->
+  <link href="css/clean-blog.min.css" rel="stylesheet">
+    <style>
+pre {
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-left: 3px solid #f36d33;
+    color: #666;
+    page-break-inside: avoid;
+    font-family: monospace;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 1.6em;
+    max-width: 100%;
+    overflow: auto;
+    padding: 1em 1.5em;
+    display: block;
+    word-wrap: break-word;
+}
+    code {
+      font-family: Consolas, monospace;
+      font-size: 14px;
+      background-color: #f5f5f5;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="index.html"></a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="about.html">About</a>
+          </li>
+          <li class="nav-item"> </li>
+          <li class="nav-item">
+            <a class="nav-link" href="Portfolio.html">Portfolio</a>
+          </li>
+          <li class="nav-item"> </li>
+          <li class="nav-item">
+            <a class="nav-link" href="contact.html">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('img/bg6.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+            <h1>Unveiling Insights: Unlocking User Experience Data with Mixpanel</h1>
+            <h2 class="subheading">Analyzing User Experience and Identifying Pain Points in a SaaS Product</h2>
+            <span class="meta">Posted by
+              <a href="#">John Plakon</a>
+              on June 14, 2023</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+
+  <h2 class="section-heading">Introduction</h2>
+  <p>
+    The dataset includes comprehensive user activity data, ranging from sign-up information to event logs, enabling the identification of patterns, gaps, and opportunities for improvement.
+  </p>
+    <p>
+    Monitoring user journeys plays a vital role in the responsibilities of product managers and analysts. It offers valuable insights into customer pain points, enabling informed decisions to be made regarding product roadmaps and marketing strategies, ultimately driving meaningful improvements.
+  </p>
+   <p>
+    I intend to leverage Mixpanel to address significant inquiries regarding user journeys. However, it is important to emphasize that the metrics and trends you choose to analyze should align closely with your product or organization's objectives and vision. This approach will provide valuable insights into how well your product aligns with your team's expectations and performance.
+  </p>
+<h2 class="section-heading">An overview of Mixpanel in brief</h2>
+   <p>
+    Mixpanel is a powerful analytics tool specifically designed for SaaS products, enabling you to gain valuable insights into user engagement metrics. It adopts a user-centric approach and emphasizes event tracking on websites or software. With Mixpanel, you have access to four essential reports that facilitate comprehensive analysis, and I will leverage each of them to address specific inquiries regarding our product.
+  </p> 
+<h2 class="section-heading">Funnel</h2>  
+   <p>
+    A funnel represents a step-by-step progression that visualizes the user flow towards conversion, providing a clear understanding of how individuals interact with your app. Funnels serve as valuable tools to assess the number of users advancing towards a specific goal, while also identifying and retaining those who drop off during the process.
+  </p> 
+<h2 class="section-heading">
+    What is the conversion rate of users within a 7-day period through my signup funnel?"
+</h2>  
+   <p>
+    I have examined all the available sign-up methods offered by both the marketing and product teams to assess the conversion rate, and the analysis reveals that influencer marketing has shown superior conversion compared to other approaches.
+  </p> 
+  
+<img src="img/mp1.png" alt="mp">
+  
+<h3>
+    What stage of the signup funnel experienced the highest user drop-off?
+</h3>  
+   <p>
+    Initially, it was observed that a mere 11.59% of the individuals who initiated the sign-up funnel successfully reached its completion.
+  </p> 
+  
+<img src="img/mp2.png" alt="mp">
+  
+   <p>
+    Further analysis revealed that the majority of drop-offs occurred during the third stage (A+2), with a significant drop-off rate of 72.92%. To mitigate this issue, the product team can investigate the user experience and the information requested during this stage in order to minimize the drop-off rate.
+  </p> 
+  
+<img src="img/mp3.png" alt="mp">
+  
+<h3>
+    <ul><li>What does the typical user journey flow look like?</li></ul>
+</h3> 
+   <p>
+    Based on the findings from the funnel analysis, the typical user journey of a new user involves creating a workspace right after signing up, but a significant number of users tend to drop off at the authentication stage.
+  </p> 
+   <p>
+    At this juncture, numerous follow-up questions arise. One such question is to determine the various authentication methods employed.
+  </p> 
+  
+<img src="img/mp4.png" alt="mp">
+ 
+<h2 class="section-heading">
+    Insights:
+</h2> 
+   <p>
+    Insights serves as a valuable tool within Mixpanel, enabling the visualization of trends extracted from product data. It offers a variety of charts that can be utilized to analyze events, cohorts, and user profiles.
+  </p> 
+<h3>
+    <ul><li>
+    What has been the user base growth in each country over the past 6 months?</li></ul>
+</h3> 
+   <p>
+    To depict our user growth across five countries, I employed a line chart.
+  </p> 
+   <p>
+    Despite the majority of our users being located in the United States, a downward trajectory in user growth can be observed across all countries.
+  </p> 
+  
+<img src="img/mp5.png" alt="mp">
+  
+<h2 class="section-heading">
+    Highlighting Popular Help Resources:
+</h2> 
+   <p>
+    Among our help documentation, the section that garnered the highest assessment is related to 'Settings,' accumulating over 35k views. Conversely, 'Guides' received fewer than 5k views during the six-month period. Notably, there was a significant decline in views from May to July. This trend aligns with the observation made in our user acquisition analysis, suggesting that a substantial portion of visitors to our help documentation are new users.
+  </p> 
+
+  
+<img src="img/mp6.png" alt="mp">
+  
+   <p>
+    Among our help documentation, the section that garnered the highest assessment is related to 'Settings,' accumulating over 35k views. Conversely, 'Guides' received fewer than 5k views during the six-month period. Notably, there was a significant decline in views from May to July. This trend aligns with the observation made in our user acquisition analysis, suggesting that a substantial portion of visitors to our help documentation are new users.
+  </p> 
+  <h2 class="section-heading">
+  Examining the Growth of Power Users:
+  </h2> 
+   <p>
+    To assess the growth of power users over the past six months, I established a cohort comprising active users who engaged with our product features, such as message creation and member invitations, during this period. Analyzing the data, we observed a decline in the number of power users from May to July.
+  </p> 
+  
+<img src="img/mp7.png" alt="mp">
+  
+  <h2 class="section-heading">
+  Identifying a Common Trend and the Need for User Interviews:
+  </h2> 
+   <p>
+    We have noticed a consistent trend across all user analysis results, indicating the necessity of conducting user interviews. This will allow us to gain a deeper understanding of whether our product effectively addresses user problems and enable us to identify innovative changes that can reverse the declining outcomes.
+  </p> 
+  <h2 class="section-heading">
+    Retention Analysis:
+  </h2> 
+   <p>
+    The primary goal of retention analysis is to assess the likelihood and reasons behind customer churn, while also identifying the stages at which customers tend to disengage.
+  </p> 
+<h3>
+    <ul><li>
+    How many users remain active two weeks after signing up?</li></ul>
+</h3> 
+   <p>
+    To determine user retention, I compiled a list of active activities based on our product features, including message creation and member invitations. Our analysis revealed a decline in usage levels within a short period of twelve days for new users. Without implementing strategies to retain these users, there is a risk of them transitioning into churned users within a month.
+  </p> 
+  
+<img src="img/mp8.png" alt="mp">
+
+<h3>
+    <ul><li>
+What proportion of users initiated and completed the available tutorials?</li></ul>
+</h3> 
+   <p>
+    Based on our analysis of tutorial start and end event data, we found that users often commence our tutorials but do not reach the completion stage. However, this behavior may not necessarily be concerning, as it suggests that users may have obtained the necessary insights to fulfill a particular process or step.
+  </p> 
+  
+<img src="img/mp9.png" alt="mp">
+  
+  <h2 class="section-heading">
+Flows:
+  </h2> 
+   <p>
+    Analyzing user flows allows you to comprehend the common routes users take within your product, including identifying drop-off points. Flows may consist of repeated steps as they showcase the sequential order of user events, whereas funnel events are counted only once, focusing on user progression.
+  </p> 
+<h3>
+    <ul><li>
+What actions did users typically perform immediately after signing up?</li></ul>
+</h3> 
+   <p>
+    This standard user journey analysis reveals the predominant process flow adopted by our new users. An overwhelming majority of 74.62% initiate the tutorials as their first course of action.
+  </p>
+  
+<img src="img/mp10.png" alt="mp">
+  
+<h3>
+    <ul><li>
+What are the frequently observed sequences of actions before sending a message?</li></ul>
+</h3> 
+   <p>
+    In addition to illustrating the user journey flow for a specific process, flow analysis can also reveal the preceding actions taken by users before engaging in a particular task.
+  </p>
+   <p>
+    In this case, I examined the sequence of actions performed by users prior to utilizing our software to send a message. The analysis indicates that 19.42% of users first joined a channel, 9% uploaded media (likely a profile picture) as the initial step, 9% created a channel beforehand, while the remaining 20.16% executed various other tasks prior to sending a message.
+  </p>
+  
+<img src="img/mp11.png" alt="mp">
+  
+<h3>
+    <ul><li>
+What is the user navigation pattern between account creation and joining a channel?</li></ul>
+</h3> 
+   <p>
+    This analysis reveals the user journey flow from account creation to joining a new channel. It appears that the majority of our users follow a pattern of creating a new workspace and inviting members before proceeding to join a channel.
+  </p>
+  
+<img src="img/mp2.png" alt="mp">
+  
+  <h2 class="section-heading">
+Conclusion
+  </h2> 
+   <p>
+    Effective product analytics revolves around asking the right questions to your data and aligning your metrics with your product goals. In this analysis, our primary objective was to identify user pain points, which we accomplished by examining the stages with the highest drop-offs and declining analysis results. Based on our findings, we can draw the following conclusions:
+  </p>
+  <h2 class="section-heading">
+<ul>
+  <li>The product team should conduct a thorough review of the authentication process, as it was a common stage for drop-offs across all analyses.</li>
+<li>Implementation of retention strategies is crucial to ensure user retention and engagement.</li></ul>
+  </h2> 
+    </p>Thank you for your attention!  </p>
+  
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <hr>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            <li class="list-inline-item">
+              <a href="#">
+              </a>
+            </li>
+            <li class="list-inline-item">
+              <a href="#">
+              </a>
+            </li>
+            <li class="list-inline-item"> <a href="https://www.linkedin.com/in/john-plakon-35695499/"> <span class="fa-stack fa-lg"> <em class="fas fa-circle fa-stack-2x"></em> <em class="fab fa-linkedin fa-stack-1x fa-inverse"></em> </span> </a> </li>
+            <li class="list-inline-item">
+              <a href="https://github.com/johnplakon">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy; John Plakon 2019</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="js/clean-blog.min.js"></script>
+
+</body>
+
+</html>
