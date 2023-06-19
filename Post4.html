@@ -103,130 +103,630 @@ pre {
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
   <h2 class="section-heading">Introduction</h2>
-  <p>Are you curious about travel patterns, preferences, and behaviors of different types of travelers? Do you want to understand the factors that influence their choices, such as accommodation type, transportation mode, and trip duration? Look no further! In this blog post, we will dive into <a href="https://www.kaggle.com/datasets/rkiattisak/traveler-trip-data">a fascinating dataset</a> that provides detailed information on various trips taken by travelers. We will use R to analyze the data, extract insights, and uncover interesting trends. Let's get started!</p>
+  <p>The data we will be looking at comes from an app that allows users to view numerous recipes provided. We will be exploring the data to see if we can get some actionable insights out of the data for the product team</p>
 
-  <h2 class="section-heading">Understanding the Dataset</h2>
+<h1>Is there a statistically significant difference in the number of recipe views per session by PRO users between main platforms?</h1>
 
-  <p>The dataset we'll be working with contains the following columns:</p>
+<h2 class="section-heading">Data Cleaning and preparation</h2>
 
-  <ul>
-    <li><strong>Trip ID:</strong> A unique identifier for each trip taken by a traveler.</li>
-    <li><strong>Destination:</strong> The name of the city or country visited by the traveler.</li>
-    <li><strong>Start date:</strong> The date the traveler started the trip.</li>
-    <li><strong>End date:</strong> The date the traveler ended the trip.</li>
-    <li><strong>Duration (days):</strong> The number of days the traveler spent on the trip.</li>
-    <li><strong>Traveler name:</strong> The name of the traveler.</li>
-    <li><strong>Traveler age:</strong> The age of the traveler at the time of the trip.</li>
-    <li><strong>Traveler gender:</strong> The gender of the traveler.</li>
-    <li><strong>Traveler nationality:</strong> The nationality of the traveler.</li>
-    <li><strong>Accommodation type:</strong> The type of accommodation the traveler stayed in, such as hotel, hostel, or
-      Airbnb.</li>
-    <li><strong>Accommodation cost:</strong> The cost of the accommodation for the entire trip.</li>
-    <li><strong>Transportation type:</strong> The mode of transportation used by the traveler, such as plane, train, or
-      car.</li>
-    <li><strong>Transportation cost:</strong> The cost of transportation for the entire trip.</li>
-  </ul>
+<ul>
+	<li>For our case, we will only be looking at &ldquo;Pro&rdquo; customers.</li>
+	<li>Remove Huawei as a platform since it has very low traffic and would not be considered a &ldquo;main platform&rdquo;</li>
+	<li>Only filter for &ldquo;recipe.detail&rdquo; event name based on my assumption that it is actually when the user engages with the product</li>
+	<li>Remove any recipes that do not have a recipe_id</li>
+</ul>
 
-  <h2 class="section-heading">Loading the Dataset</h2>
+<pre><code>
+library(tidyverse) # For data manipulation and visualization
+library(arrow) # For reading in Parquet data
+library(lubridate) # For working with dates
 
-  <p>To begin, let's load the dataset into R and take a quick look at its structure. We'll use the <code>read.csv()</code>
-    function to read the CSV file:</p>
 
-  <pre><code># Load the dataset
-  travel_data &lt;- read.csv("path/to/dataset.csv")
+#filter out any recipes that do not have a recipe_id and only look at &quot;pro&quot; customers and remove Huwaei
 
-  # Display the structure of the dataset
-  str(travel_data)
-  </code></pre>
+recipes &lt;- recipes %&gt;% 
+  filter(!is.na(recipe_id), 
+         subscriptionstatus == &#39;pro&#39;,
+         platform != &#39;huawei&#39;,
+         name == &quot;recipes.detail&quot;)</code></pre>
 
-  <h2 class="section-heading">Exploratory Data Analysis</h2>
+<h2 class="section-heading">Exploratory Data Analysis</h2>
 
-  <p>Now that we have the dataset loaded, let's perform some exploratory data analysis to gain insights into the travel
-    data. We'll answer questions such as:</p>
+<pre><code>
+library(patchwork) # For joining multiple plots together
 
-  <ul>
-    <li>What are the most popular travel destinations?</li>
-    <li>What is the average trip duration?</li>
-    <li>What are the common types of accommodations and transportation modes chosen by travelers?</li>
-    <li>Are there any notable cost variations based on travel factors?</li>
-  </ul>
 
-  <p>Let's dive into the code:</p>
 
-  <pre><code># Install required packages
-  install.packages("ggplot2")
-  install.packages("dplyr")
+# Calculating and visualizing views per session by platform and date
 
-  # Load required packages
-  library(ggplot2)
-  library(dplyr)
+p1 &lt;- recipes %&gt;% 
+  group_by(date,platform) %&gt;% 
+  summarise(views_per_session = n()/n_distinct(sessionid)) %&gt;% 
+  ggplot(aes(date,views_per_session))+
+  geom_line(aes(color=platform),size = 1.5) +
+  geom_text(aes(label=round(views_per_session,2)),vjust=-1)+
+  scale_color_manual(values = c(&quot;#0072B2&quot;, &quot;#009E73&quot;)) + # Set color scheme
+  labs(title = &quot;Views per Session by Platform and Date&quot;, # Set title
+       x = &quot;&quot;,
+       y = &quot;&quot;) + # Set y-axis label
+  theme_minimal() + # Set theme to minimal
+  theme(plot.title = element_text(size = 20, face = &quot;bold&quot;, hjust = 0.5), # Set title font size, weight, and position
+        axis.text = element_text(size = 14), # Set axis label font size
+        axis.title = element_text(size = 16),# Set axis title font size
+        panel.grid.major = element_blank(), # Remove major grid lines
+        panel.grid.minor = element_blank()) # Remove minor grid lines
 
-  # Top 5 most popular travel destinations
-  top_destinations &lt;- travel_data %>%
-    group_by(Destination) %>%
-    summarise(Total_Trips = n()) %>%
-    arrange(desc(Total_Trips)) %>%
-    head(5)
+# Calculating and visualizing views per session by platform
 
-  # Bar plot of top destinations
-  ggplot(top_destinations, aes(x = reorder(Destination, -Total_Trips), y = Total_Trips)) +
-    geom_bar(stat = "identity", fill = "steelblue") +
-    labs(title = "Top 5 Travel Destinations", x = "Destination", y = "Total Trips") +
-    theme_bw()
+p2 &lt;- recipes %&gt;% 
+  group_by(platform) %&gt;% 
+  summarise(views_per_session = round(n()/n_distinct(sessionid),2)) %&gt;% 
+  ggplot(aes(platform,views_per_session))+
+  geom_bar(aes(fill= platform),stat = &quot;identity&quot;, width = 0.5) +
+  geom_text(aes(label= views_per_session),vjust=1, size = 6)+
+  scale_fill_manual(values = c(&quot;#0072B2&quot;, &quot;#009E73&quot;)) +
+  labs(title = &quot;Views per Session by Platform&quot;,
+       x = &quot;&quot;,
+       y = &quot; &quot;) +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 20, face = &quot;bold&quot;, hjust = 0.5),
+        axis.text = element_text(size = 14),
+        axis.title = element_text(size = 16),
+        panel.grid.major = element_blank(), # Remove major grid lines
+        panel.grid.minor = element_blank())
 
-  # Average trip duration
-  average_duration &lt;- mean(travel_data$Duration)
+# Calculating and visualizing views per session by platform and overall goal
 
-  # Print the average trip duration
-  cat("Average Trip Duration:", round(average_duration, 2), "days\n")
+p3 &lt;- recipes %&gt;% 
+  group_by(platform,overallgoal) %&gt;% 
+  summarise(views_per_session = round(n()/n_distinct(sessionid),2)) %&gt;%
+  filter(!is.na(overallgoal)) %&gt;% 
+  ggplot(aes(x = overallgoal, y = views_per_session, fill = platform)) +
+  geom_bar(stat = &quot;identity&quot;, position = &quot;dodge&quot;, width = 0.7) +
+  geom_text(aes(label = views_per_session, group = platform), 
+            position = position_dodge(width = 0.7), vjust = 1, size = 4) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
+        axis.text.y = element_text(size = 12),
+        axis.title = element_text(size = 14, face = &quot;bold&quot;),
+        strip.text = element_text(size = 14, face = &quot;bold&quot;),
+        strip.background = element_rect(fill = &quot;lightgray&quot;, colour = &quot;black&quot;, size = 1),
+        legend.position = &quot;right&quot;) +
+  scale_fill_manual(values = c(&quot;#0072B2&quot;, &quot;#009E73&quot;)) +
+  labs(title = &quot;Views per Session by Platform and Overall Goal&quot;,
+       x = &quot;&quot;,
+       y = &quot;&quot;)
 
-  # Accommodation type distribution
-  accommodation_distribution &lt;- travel_data %>%
-    group_by(Accommodation_type) %>%
-    summarise(Total_Trips = n())
 
-  # Pie chart of accommodation type distribution
-  ggplot(accommodation_distribution, aes(x = "", y = Total_Trips, fill = Accommodation_type)) +
-    geom_bar(stat = "identity", width = 1, color = "white") +
-    coord_polar("y", start = 0) +
-    labs(title = "Accommodation Type Distribution") +
-    theme_void()
+(p1+p2)/p3</code></pre>
 
-  # Transportation type distribution
-  transportation_distribution &lt;- travel_data %>%
-    group_by(Transportation_type) %>%
-    summarise(Total_Trips = n())
+<p><img alt="" src="img/p4img1.jpg" style="height:800px; width:1000px" /></p>
 
-  # Pie chart of transportation type distribution
-  ggplot(transportation_distribution, aes(x = "", y = Total_Trips, fill = Transportation_type)) +
-    geom_bar(stat = "identity", width = 1, color = "white") +
-    coord_polar("y", start = 0) +
-    labs(title = "Transportation Type Distribution") +
-    theme_void()
+<ul>
+	<li>We can see that there is a slight difference between ios and android when calculating views per session.</li>
+	<li>User engagement is highest on Sunday and drops as the week moves along to it its lowest values on Saturday</li>
+	<li>Losing weight is the most popular goal in both platforms</li>
+	<li>Since this is only 1 weeks worth of data, it might not actually be representative of actual customer engagement</li>
+</ul>
 
-  # Average accommodation cost by destination
-  average_cost_by_destination &lt;- travel_data %>%
-    group_by(Destination) %>%
-    summarise(Average_Cost = mean(Accommodation_cost, na.rm = TRUE))
+<h2 class="section-heading">Proving Statistical Significance</h2>
 
-  # Bar plot of average accommodation cost by destination
-  ggplot(average_cost_by_destination, aes(x = reorder(Destination, -Average_Cost), y = Average_Cost)) +
-    geom_bar(stat = "identity", fill = "steelblue") +
-    labs(title = "Average Accommodation Cost by Destination", x = "Destination", y = "Average Cost") +
-    theme_bw()
-  </code></pre>
+<p>To statistically prove the difference between the two platforms, we would need a big enough sample. For this reason, we will calculate number of views per session on a platform and user_id level</p>
 
-  <h2 class="section-heading">Conclusion</h2>
+<pre><code>
+#Calculating views per session on a user level for each platform
+views_per_platform_session &lt;-recipes %&gt;% 
+  group_by(platform,userid) %&gt;% 
+  summarise(views = n()/n_distinct(sessionid)) %&gt;% 
+  ungroup()</code></pre>
 
-  <p>In this blog post, we explored the traveler trip dataset using R. We analyzed the data to identify popular travel
-    destinations, average trip duration, distribution of accommodation and transportation types, and variations in
-    accommodation costs by destination. The insights gained from this analysis can be valuable for travel-related
-    businesses, allowing them to tailor their marketing strategies and create personalized travel packages that cater to
-    the preferences of different types of travelers.</p>
+<pre><code>
+#Visualizing the distribution of our data
+views_per_platform_session %&gt;% 
+  ggplot(aes(x=views,fill=platform))+
+  geom_density(trim = FALSE) +
+  scale_fill_manual(values = c(&quot;#f8766d&quot;, &quot;#00ba38&quot;)) +
+  labs(x = &quot;Group&quot;, y = &quot;Value&quot;, fill = &quot;Group&quot;) +
+  facet_wrap(~platform)+
+  theme_classic() +
+  theme(axis.line = element_line(size = 1),
+        axis.title = element_text(face = &quot;bold&quot;),
+        axis.text = element_text(size = 12, color = &quot;black&quot;),
+        legend.position = &quot;bottom&quot;,
+        legend.title = element_blank(),
+        legend.text = element_text(size = 12),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank())</code></pre>
 
-  <p>Remember, travel patterns and preferences are constantly evolving, and analyzing datasets like this can help us stay
-    updated with the latest trends. So, go ahead and leverage the power of data analysis to unlock new opportunities in
-    the travel industry!</p>
+<p><img alt="" src="img/p4img2.jpg" style="height:334px; width:1000px" /></p>
+
+<pre><code>
+library(car)
+
+
+# Check for homogeneity of variance
+leveneTest(views ~ platform, data = views_per_platform_session)</code></pre>
+
+<ul>
+	<li>Our data does not follow a normal distribution</li>
+	<li>The Levene&rsquo;s test shows there is significant evidence that the variances between the two groups are not equal</li>
+	<li>Since the data is not normal and the variances are different, we cannot use a t-test</li>
+	<li>A possible alternative for us is the Mann-Whitney U test. It is easy to interpret and good at handling outliers like in our case</li>
+	<li>It makes fewer assumptions than parametric tests like the t-test, which requires the data to be normally distributed and have equal variances.</li>
+</ul>
+
+<h2 class="section-heading">Running the statistical test</h2>
+
+<pre><code>
+# subset the data for the two platforms
+android_data &lt;- views_per_platform_session %&gt;%
+  filter(platform == &quot;android&quot;) %&gt;%
+  select(views) %&gt;% 
+  pull()
+
+ios_data &lt;- views_per_platform_session %&gt;%
+  filter(platform == &quot;ios&quot;) %&gt;%
+  select(views) %&gt;% 
+  pull()
+
+# perform the Mann-Whitney U test
+mwu_test &lt;- wilcox.test(android_data, ios_data)
+
+# print the test results
+mwu_test</code></pre>
+
+<pre><code>
+## 
+##  Wilcoxon rank sum test with continuity correction
+## 
+## data:  android_data and ios_data
+## W = 153841068, p-value = 3.003e-15
+## alternative hypothesis: true location shift is not equal to 0</code></pre>
+
+<p>The test result shows a p-value of 3.003e-15, which means that the difference between the two groups is statistically significant. The alternative hypothesis is that the true location shift (median difference) is not equal to zero. Therefore, we can conclude that there is a significant difference between the android data and ios data groups in terms of the number of views per session.</p>
+
+<p>We could also use the Hodges-Lehmann estimator to determine the magnitude of the difference. The Hodges-Lehmann estimator is a non-parametric method for calculating the median difference between two groups.</p>
+
+<pre><code>
+library(effsize)
+
+# Calculate Hodges-Lehmann estimator
+cohen.d(android_data, ios_data, paired=FALSE, method=&quot;hedges&quot;)</code></pre>
+
+<pre><code>
+## 
+## Cohen&#39;s d
+## 
+## d estimate: -0.006311648 (negligible)
+## 95 percent confidence interval:
+##       lower       upper 
+## -0.02708118  0.01445788</code></pre>
+
+<h2 class="section-heading">Key takeaways</h2>
+
+<ul>
+	<li>Our test shows that there is a statistically significant difference in user engagement between the ios and android users,</li>
+	<li>But the difference is so small that it may not have practical importance or impact.</li>
+	<li>The product team may consider focusing on other factors that have a more significant impact on user engagement, or they may investigate further to identify the underlying reasons for the small difference between the two platforms.</li>
+</ul>
+
+<h1>What makes a recipe &ldquo;Successful&rdquo;?</h1>
+
+<ul>
+	<li>To measure the popularity/success of a recipe, we will be calculating the geometric mean of&nbsp;<strong>views</strong>&nbsp;<strong>per session</strong>&nbsp;and&nbsp;<strong>views per user</strong></li>
+	<li>This approach will give equal weight to both metrics while accounting for differences in their scales and emphasizing recipes that have a balanced performance in both metrics.</li>
+	<li>As reference, the overall average pop index is&nbsp;<strong>1.22</strong></li>
+</ul>
+
+<h2 class="section-heading">Data preparation and transformation</h2>
+
+<pre><code>
+#loading our recipe usage data and creating week columns
+
+recipe_usage &lt;- read_parquet(&quot;data.parquet&quot;) %&gt;% 
+  mutate(wkday = wday(date,label= TRUE),
+         weekday_or_weekend = if_else(wkday %in% c(&quot;Mon&quot;,&quot;Tue&quot;,&quot;Wed&quot;,&quot;Thu&quot;,&quot;Fri&quot;),&quot;weekday&quot;,&quot;weekend&quot;))
+
+
+# Calculating usage metrics on recipe and weekday_weekend group level
+
+df1 &lt;- recipe_usage %&gt;% 
+  group_by(recipe_id,weekday_or_weekend) %&gt;% 
+  summarise(hits = sum(as.numeric(no_hits),na.rm = T),
+            sessions = sum(as.numeric(no_sessions),na.rm = T),
+            users = sum(as.numeric(no_users),na.rm = T),
+            views_per_session = hits/sessions,
+            views_per_user = hits/users) %&gt;% 
+  ungroup() %&gt;%
+  mutate(popularity_index = sqrt(views_per_session*views_per_user)) %&gt;% # Average of views_per_session and views_per_user will be our popularity index
+  mutate_if(is.numeric, ~round(.,2))
+
+# Aggregating hits,sessions, and users on recipe level
+
+df2 &lt;- recipe_usage %&gt;% 
+  group_by(recipe_id) %&gt;% 
+  summarise(hits = sum(as.numeric(no_hits),na.rm = T),
+            sessions = sum(as.numeric(no_sessions),na.rm = T),
+            users = sum(as.numeric(no_users),na.rm = T))
+
+# joining the two datasets together to get a final view
+
+combined &lt;- df1 %&gt;% 
+  select(recipe_id,weekday_or_weekend,popularity_index) %&gt;% 
+  pivot_wider(names_from = weekday_or_weekend,values_from = popularity_index) %&gt;% 
+  left_join(df2) %&gt;% 
+  rename(weekday_popularity_index = weekday,
+         weekend_popularity_index = weekend)</code></pre>
+
+<h2 class="section-heading">Weekends vs Weekdays</h2>
+
+<p>Lets aggregate our data to see to see the share of recipes that are more popular on weekends than weekdays and vice versa</p>
+
+<pre><code>
+combined %&gt;%
+  summarise(recipes_popular_weekday = n_distinct(recipe_id[weekday_popularity_index&gt;weekend_popularity_index]),
+            recipes_popular_weekend = n_distinct(recipe_id[weekend_popularity_index&gt;weekday_popularity_index])) %&gt;% 
+  mutate_if(is.numeric, ~round(.,2)) %&gt;% 
+  pivot_longer(cols = everything(), names_to = &quot;category&quot;, values_to = &quot;cnt&quot;) %&gt;% 
+# Create a bar chart
+ggplot(aes(x = category, y = cnt, fill = category)) +
+  geom_bar(stat = &quot;identity&quot;) +
+  geom_text(aes(label=cnt),vjust=1)+
+  theme_minimal() +
+  theme(axis.text.x = element_text(hjust = 1),
+        legend.position = &quot;none&quot;) +
+  labs(title = &quot;Count of recipes popular on weekdays or weekends&quot;,
+       x = &quot;&quot;,
+       y = &quot;&quot;) +
+  scale_fill_manual(values = c(&quot;steelblue&quot;, &quot;lightblue&quot;, &quot;darkred&quot;, &quot;pink&quot;))</code></pre>
+
+<p><img alt="" src="img/p4img3.jpg" style="height:500px; width:700px" /></p>
+
+<p>Its interesting to see that more than&nbsp;<strong>50%</strong>&nbsp;of recipes are more popular on weekdays than on the weekends but the popularity index for both categories of recipes is almost the same. Lets take a look on a day level</p>
+
+<h2 class="section-heading">Daily seasonality of the popularity index</h2>
+
+<pre><code>
+recipe_usage %&gt;%
+  group_by(date, wkday) %&gt;%
+  summarise(hits = sum(as.numeric(no_hits), na.rm = TRUE),
+            sessions = sum(as.numeric(no_sessions), na.rm = TRUE),
+            users = sum(as.numeric(no_users), na.rm = TRUE),
+            views_per_session = hits/sessions,
+            views_per_user = hits/users) %&gt;%
+  ungroup() %&gt;%
+  mutate(popularity_index = sqrt(views_per_session*views_per_user)) %&gt;%
+  select(date, wkday, popularity_index) %&gt;%
+  ggplot(aes(date, popularity_index)) +
+  geom_line(color = &quot;steelblue&quot;, size = 1) +
+  geom_text(aes(label = wkday), vjust = -0.5, size = 5) +
+  theme_minimal() +
+  labs(title = &quot;Popularity Index by Date&quot;,
+       x = &quot;&quot;,
+       y = &quot;&quot;) +
+  theme(plot.title = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())</code></pre>
+
+<p><img alt="" src="img/p4img4.jpg" style="height:467px; width:1000px" /></p>
+
+<h2 class="section-heading">Key Takeaways</h2>
+
+<p>Interestingly, we have more popular recipes on the weekdays (<strong>1073 recipes</strong>) vs on the weekends (<strong>865 recipes</strong>)</p>
+
+<p>This is due to a seasonal aspect to the data where the popularity is the lowest on Sundays (&nbsp;<strong>Avg 1.20 popularity index</strong>) then peaks on Mondays (<strong>Avg 1.23 popularity index</strong>) and gets lower as the week progresses until peaking again on Saturday(<strong>Avg 1.23 popularity index</strong>). For arguments sake, we will assume this a significant difference. This could be due to:</p>
+
+<p><strong>Weekend vs. weekday mindset</strong>: Users may view Sundays as a day to relax, indulge, or spend time with family, resulting in lower engagement with the fitness recipe app. On the other hand, Mondays often represent the start of a new week and the resumption of healthy routines, which could lead to increased usage of the app.</p>
+
+<p><strong>Meal planning</strong>: Many people plan their meals for the week on Sundays and Mondays. As the week progresses, users may already have a plan in place and therefore spend less time on the app.</p>
+
+<p><strong>Motivation</strong>: Users might be more motivated to follow a healthy lifestyle at the beginning of the week. This motivation could wane as the week goes on, leading to decreased engagement with the app.</p>
+
+<p>The product team could:</p>
+
+<p><strong>Sunday</strong>: Since Sundays have the lowest popularity, provide meal planning tools and meal prep ideas to help users prepare for the week ahead. Offer healthy recipes that can be made in bulk and easily reheated or re-purposed for multiple meals throughout the week.</p>
+
+<p><strong>Monday</strong>: On Mondays, when the app&rsquo;s popularity peaks, emphasize fresh starts and motivation. Offer a &ldquo;Recipe of the Week&rdquo; that aligns with users&rsquo; dietary preferences and is easy to prepare.</p>
+
+<p><strong>Tuesday to Friday</strong>: Focus on offering quick and easy recipes for lunch and dinner that can be prepared in less time. This will cater to users who have limited time for cooking during the workweek. Include healthy meal options that can be easily packed for lunch or made in advance.</p>
+
+<p><strong>Saturday</strong>: As popularity increases again on Saturdays, consider offering healthy weekend brunch ideas or dishes suitable for social gatherings</p>
+
+<h1>Other factors affecting popularity</h1>
+
+<h2 class="section-heading">By Difficulty</h2>
+
+<pre><code>
+recipe_usage %&gt;%
+  group_by(difficulty) %&gt;% 
+  summarise(hits = sum(as.numeric(no_hits),na.rm = T),
+            sessions = sum(as.numeric(no_sessions),na.rm = T),
+            users = sum(as.numeric(no_users),na.rm = T),
+            views_per_session = hits/sessions,
+            views_per_user = hits/users) %&gt;% 
+  ungroup() %&gt;%
+  mutate(popularity_index = sqrt(views_per_session*views_per_user)) %&gt;% 
+  mutate_if(is.numeric, ~round(.,2)) %&gt;% 
+  ggplot(aes(x = difficulty, y = popularity_index, fill = difficulty)) +
+  geom_col() +
+  geom_text(aes(label=popularity_index))+
+  scale_fill_brewer(palette = &quot;Set2&quot;) +
+  theme_minimal() +
+  theme(axis.text = element_text(size = 12),
+        axis.title = element_text(size = 14, face = &quot;bold&quot;),
+        title = element_text(size = 16, face = &quot;bold&quot;)) +
+  xlab(&quot;&quot;) +
+  ylab(&quot;&quot;) +
+  ggtitle(&quot;Popularity Index by Difficulty&quot;) +
+  guides(fill = FALSE)</code></pre>
+
+<p><img alt="" src="p4img5.jpg" style="height:500px; width:700px" /></p>
+
+<p>Users prefer easy (<strong>1.22 pop index</strong>) and normal (<strong>1.23 pop index</strong>) difficulty recipes, the team could prioritize adding more of these recipes to the app and highlighting them on the main page or in recommendations as compared to harder recipes that have a low pop index of&nbsp;<strong>1.15</strong></p>
+
+<h2 class="section-heading">Number of steps taken to cook vs popularity</h2>
+
+<pre><code>
+d1 &lt;- recipe_usage %&gt;%
+  group_by(steps) %&gt;% 
+  summarise(hits = sum(as.numeric(no_hits), na.rm = TRUE),
+            sessions = sum(as.numeric(no_sessions), na.rm = TRUE),
+            users = sum(as.numeric(no_users), na.rm = TRUE),
+            views_per_session = hits/sessions,
+            views_per_user = hits/users) %&gt;% 
+  ungroup() %&gt;%
+  mutate(popularity_index = sqrt(views_per_session*views_per_user)) %&gt;% 
+  mutate_if(is.numeric, round, 2)
+
+
+
+  d1 %&gt;% ggplot(aes(x = steps, y = popularity_index)) +
+  geom_point(aes(size=hits),color=&quot;maroon&quot;) +
+  geom_line()+
+  geom_area(data = d1 %&gt;% filter(steps %in% c(3,4,5,6,7)),aes(x=steps,y=popularity_index),alpha=0.3)+
+  labs(x = &quot;&quot;, y = &quot;&quot;, title = &quot;Popularity Index by Steps&quot;,subtitle = &quot;Size of points by no of hits&quot;) +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5, size = 14, face = &quot;bold&quot;),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_text(size = 12),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = &quot;none&quot;,
+        legend.title = element_blank(),
+        legend.text = element_text(size = 10))+
+    coord_cartesian(ylim = c(1, 1.3))</code></pre>
+
+<p><img alt="" src="img/p4img6.jpg" style="height:334px; width:1000px" /></p>
+
+<p>Looking at the popularity index by the steps to cook a recipe, It seems recipes that have between&nbsp;<strong>3&ndash;7</strong>&nbsp;steps are more popular (<strong>avg 1.23 pop index</strong>). There could be several reasons why recipes with a lower or higher number of steps are less popular. Here are some possibilities:</p>
+
+<ul>
+	<li><strong>Complexity</strong>: Recipes with too few or too many steps may be perceived as too easy or too difficult, respectively. People may prefer recipes that challenge them a little but are still easy enough to follow.</li>
+	<li><strong>Time</strong>: Recipes with too few or too many steps may also take too little or too much time to prepare, respectively. People may prefer recipes that are quick and easy to follow but still have delicious results.</li>
+	<li><strong>Variety</strong>: Recipes with too few or too many steps may also lack variety in terms of flavors and ingredients. People may prefer recipes that have a good balance of flavors and textures, and that use a variety of ingredients to keep things interesting.</li>
+</ul>
+
+<h2 class="section-heading">What about Portion Count?</h2>
+
+<pre><code>
+recipe_usage %&gt;%
+  group_by(portioncount) %&gt;% 
+  summarise(hits = sum(as.numeric(no_hits), na.rm = TRUE),
+            sessions = sum(as.numeric(no_sessions), na.rm = TRUE),
+            users = sum(as.numeric(no_users), na.rm = TRUE),
+            views_per_session = hits/sessions,
+            views_per_user = hits/users) %&gt;% 
+  ungroup() %&gt;%
+  mutate(popularity_index = sqrt(views_per_session*views_per_user)) %&gt;% 
+  mutate_if(is.numeric, round, 2) %&gt;%
+  top_n(15, hits) %&gt;% 
+  ggplot(aes(x = portioncount, y = popularity_index)) +
+  geom_point(aes(size = hits), color = &#39;darkred&#39;) +
+  geom_line()+
+  labs(x = &quot;portion count&quot;, y = &quot;pop index&quot;, title = &quot;Popularity Index by portioncount&quot;, subtitle = &quot;Point size scales with hits&quot;) +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5, size = 14, face = &quot;bold&quot;),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_text(size = 12),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = &quot;none&quot;,
+        legend.title = element_blank(),
+        legend.text = element_text(size = 10))+
+  scale_x_continuous(breaks = seq(1, 30, 1))</code></pre>
+
+<p><img alt="" src="img/p4img7.jpg" style="height:334px; width:1000px" /></p>
+
+<p>Recipes in the&nbsp;<strong>1&ndash;4</strong>&nbsp;portion count range are the most popular with an average popularity index of&nbsp;<strong>1.23</strong>. This could be due to:</p>
+
+<ul>
+	<li>Smaller households: Most households may consist of fewer people, so recipes with smaller portion sizes are more appealing.</li>
+	<li>Individual preferences: Users might prefer cooking smaller portions to cater to their personal tastes or dietary needs.</li>
+	<li>Meal prep and planning: Smaller portion sizes can be convenient for users who want to prepare meals for one or a few days, avoiding food waste and ensuring freshness.</li>
+	<li>Easier to scale: Smaller portion recipes can be easier to scale up or down based on the user&rsquo;s needs.</li>
+</ul>
+
+<h2 class="section-heading">Are longer recipes that take too long to make less popular?</h2>
+
+<pre><code>
+recipe_usage %&gt;%
+  filter(preparationtime &lt; 200) %&gt;% 
+  group_by(preparationtime) %&gt;% 
+  summarise(hits = sum(as.numeric(no_hits), na.rm = TRUE),
+            sessions = sum(as.numeric(no_sessions), na.rm = TRUE),
+            users = sum(as.numeric(no_users), na.rm = TRUE),
+            views_per_session = hits/sessions,
+            views_per_user = hits/users) %&gt;% 
+  ungroup() %&gt;%
+  mutate(popularity_index = sqrt(views_per_session*views_per_user)) %&gt;% 
+  mutate_if(is.numeric, round, 2) %&gt;%
+  top_n(10, popularity_index) %&gt;% 
+  ggplot(aes(x = preparationtime, y = popularity_index)) +
+  geom_point(aes(size = hits), color = &#39;darkred&#39;) +
+  geom_line()+
+  labs(x = &quot;mins&quot;, y = &quot;pop index&quot;, title = &quot;Popularity Index by Preparation Time (mins)&quot;, subtitle = &quot;Point size scales with hits&quot;) +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5, size = 14, face = &quot;bold&quot;),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_text(size = 12),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = &quot;none&quot;,
+        legend.title = element_blank(),
+        legend.text = element_text(size = 10))+
+  ylim(c(1.16,1.5))+
+  scale_x_continuous(breaks = seq(5, 200, 10))</code></pre>
+
+<p><img alt="" src="img/p4img8.jpg" style="height:334px; width:1000px" /></p>
+
+<p>Recipes&nbsp;<strong>&lt;=25 mins</strong>&nbsp;or&nbsp;<strong>&lt;50 mins</strong>&nbsp;are definitely more popular (<strong>1.25 pop index</strong>) in terms of popularity index and the number of hits that they get. We have removed outliers&nbsp;<strong>(&gt;200 mins)</strong>&nbsp;to remove noise and present a more aesthetic visual</p>
+
+<h2 class="section-heading">Unnest the recipe tags and see how they influence recipe success</h2>
+
+<pre><code>
+top20_rec &lt;- recipe_usage %&gt;% 
+  separate_rows(tags,sep = &quot;,&quot;) %&gt;% 
+  group_by(tags) %&gt;% 
+  summarise(hits = sum(as.numeric(no_hits), na.rm = TRUE),
+            sessions = sum(as.numeric(no_sessions), na.rm = TRUE),
+            users = sum(as.numeric(no_users), na.rm = TRUE),
+            views_per_session = hits/sessions,
+            views_per_user = hits/users) %&gt;% 
+  ungroup() %&gt;%
+  mutate(popularity_index = sqrt(views_per_session*views_per_user)) %&gt;% 
+  mutate_if(is.numeric, round, 2) %&gt;%
+  top_n(15,popularity_index) %&gt;% 
+  ggplot(aes(x = reorder(tags, popularity_index), y = popularity_index)) +
+  geom_bar(stat = &quot;identity&quot;,fill= &quot;#b20238&quot;)+
+  geom_text(aes(label = popularity_index), hjust = 5, size = 3.5, color = &quot;white&quot;)+
+  coord_flip()+
+  labs(x = &quot;&quot;, y = &quot;&quot;, title = &quot;Popularity Index of Top 15 Tags&quot;) +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5, size = 14, face = &quot;bold&quot;),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_text(size = 12),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = &quot;top&quot;,
+        legend.title = element_blank(),
+        legend.text = element_text(size = 10))
+
+
+bottom20_rec &lt;- recipe_usage %&gt;% 
+  separate_rows(tags,sep = &quot;,&quot;) %&gt;% 
+  group_by(tags) %&gt;% 
+  summarise(hits = sum(as.numeric(no_hits), na.rm = TRUE),
+            sessions = sum(as.numeric(no_sessions), na.rm = TRUE),
+            users = sum(as.numeric(no_users), na.rm = TRUE),
+            views_per_session = hits/sessions,
+            views_per_user = hits/users) %&gt;% 
+  ungroup() %&gt;%
+  mutate(popularity_index = sqrt(views_per_session*views_per_user)) %&gt;% 
+  mutate_if(is.numeric, round, 2) %&gt;%
+  top_n(-15,popularity_index) %&gt;% 
+  ggplot(aes(x = reorder(tags, popularity_index), y = popularity_index)) +
+  geom_bar(stat = &quot;identity&quot;,fill= &quot;#0d1137&quot;)+
+  geom_text(aes(label = popularity_index), hjust = 5, size = 3.5, color = &quot;white&quot;)+
+  coord_flip()+
+  labs(x = &quot;&quot;, y = &quot;&quot;, title = &quot;Popularity Index of Bottom 15 Tags&quot;) +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5, size = 14, face = &quot;bold&quot;),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_text(size = 12),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = &quot;top&quot;,
+        legend.title = element_blank(),
+        legend.text = element_text(size = 10))
+
+
+top20_rec+bottom20_rec</code></pre>
+
+<p><img alt="" src="img/p4img9.jpg" style="height:534px; width:1000px" /></p>
+
+<p>Based on the order of tags from most popular to least popular, we can infer the following:</p>
+
+<ul>
+	<li><strong>Casseroles, meat, and soup</strong>&nbsp;are among the top three tags, suggesting that users prefer hearty, filling meals.</li>
+	<li><strong>Lunch</strong>&nbsp;is a popular tag, indicating that users are interested in recipes that are quick and easy to prepare for a midday meal.</li>
+	<li><strong>High protein, low fat, and low calorie</strong>&nbsp;are popular tags, suggesting that users are conscious of their health and looking for recipes that fit their dietary needs.</li>
+	<li>The presence of multiple calorie tags&nbsp;<strong>(500kcal, 400kcal, 300kcal, etc.)</strong>&nbsp;suggests that users are interested in recipes that are lower in calories and can &mdash; help them maintain a healthy weight. But they are not as interested in super low calories&nbsp;<strong>(50kcal,100kcal)</strong>&nbsp;which might not be filling enough or recipes that are too high in calories&nbsp;<strong>(700kcal)</strong></li>
+	<li>clean eating, and detox are also popular tags, indicating that users are interested in incorporating more healthy foods into their diet.</li>
+	<li><strong>Baking</strong>&nbsp;and&nbsp;<strong>dessert</strong>&nbsp;tags appear towards the end of the list, suggesting that users may be less interested in indulgent treats and more focused on healthy, nutritious meals.</li>
+	<li><strong>Breakfast</strong>&nbsp;is not as popular as dinner and lunch. Probably due to people not having enough time in the early morning</li>
+</ul>
+
+<h2 class="section-heading">Analyzing the recipe descriptions</h2>
+
+<pre><code>
+library(tidytext)
+library(stopwords)
+
+# remove punctuations and numbers
+recipe_usage &lt;- recipe_usage %&gt;% 
+  mutate(description = str_replace_all(description, &quot;[^[:alpha:][:space:]]&quot;, &quot;&quot;),
+         description = str_replace_all(description, &quot;\\d+&quot;, &quot;&quot;))
+
+# create a tidy text data frame
+tidy_description &lt;- recipe_usage %&gt;%
+  select(recipe_id, description,no_hits,no_sessions,no_users) %&gt;%
+  unnest_tokens(word, description) %&gt;%
+  anti_join(stop_words) %&gt;%
+  filter(!is.na(word))
+
+# view the top 15 most popular words
+tidy_description %&gt;%
+  group_by(word) %&gt;% 
+  summarise(hits = sum(as.numeric(no_hits), na.rm = TRUE),
+            sessions = sum(as.numeric(no_sessions), na.rm = TRUE),
+            users = sum(as.numeric(no_users), na.rm = TRUE),
+            views_per_session = hits/sessions,
+            views_per_user = hits/users) %&gt;% 
+  ungroup() %&gt;%
+  top_n(15,hits) %&gt;% 
+  mutate(popularity_index = (views_per_session + views_per_user)/2) %&gt;% 
+  mutate_if(is.numeric, round, 2) %&gt;% 
+  ggplot(aes(x = reorder(word, popularity_index), y = popularity_index)) +
+  geom_bar(stat = &quot;identity&quot;,fill=&quot;#e75874&quot;)+
+  geom_text(aes(label = popularity_index), hjust = 5, size = 5, color = &quot;white&quot;, bold=TRUE)+
+  coord_flip()+
+  labs(x = &quot;&quot;, y = &quot;&quot;, title = &quot;Popularity Index of Description words&quot;,subtitle = &quot;Shows Top 15 most popular (hits) words from the recipe descriptions&quot;) +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5, size = 14, face = &quot;bold&quot;),
+        axis.title.x = element_text(size = 12),
+        axis.title.y = element_text(size = 12),
+        axis.text.x = element_text(size = 10),
+        axis.text.y = element_text(size = 10),
+        legend.position = &quot;top&quot;,
+        legend.title = element_blank(),
+        legend.text = element_text(size = 10))</code></pre>
+
+<p><img alt="" src="img/p4img10.jpg" style="height:534px; width:1000px" /></p>
+
+<ul>
+	<li><strong>Meal</strong>&nbsp;and&nbsp;<strong>dish</strong>&nbsp;are commonly used words that imply users are looking for a full, satisfying meal, rather than just a snack or side dish.</li>
+	<li><strong>Prepare</strong>&nbsp;and&nbsp;<strong>ingredients</strong>&nbsp;suggest that users are interested in learning how to cook and create new dishes from scratch.</li>
+	<li><strong>Delicious</strong>&nbsp;implies that taste is an important factor in recipe selection, which is not surprising since the ultimate goal of cooking is to create tasty meals.</li>
+	<li><strong>Time</strong>&nbsp;and&nbsp;<strong>easy</strong>&nbsp;suggest that users are looking for recipes that are not too time-consuming or complicated to prepare.</li>
+	<li><strong>Day</strong>&nbsp;implies that users may be interested in recipes that are suitable for a particular time of day, such as breakfast, lunch, or dinner.</li>
+	<li><strong>Salad</strong>&nbsp;and&nbsp;<strong>protein</strong>&nbsp;suggest that users may be interested in healthy recipes that incorporate fresh ingredients and provide balanced nutrition.</li>
+	<li><strong>Perfect</strong>&nbsp;and&nbsp;<strong>fresh</strong>&nbsp;imply that users are looking for recipes that are high-quality and satisfying.</li>
+	<li><strong>Tip</strong>&nbsp;suggests that users may be interested in learning cooking techniques and tricks to improve their skills.</li>
+</ul>
+
+<h1>Conclusion</h1>
+
+<p>The goal of this analysis was to give you a glimpse of what a real-world product analytics project looks like. I also focused on generating actionable insights from our data rather than doing a generic exploratory data analysis. This because as analysts, our goal is to illicit some kind of action from our stakeholders based on our analysis</p>
+
+<p><strong>Sunday</strong>: Since Sundays have the lowest popularity, provide meal planning tools and meal prep ideas to help users prepare for the week ahead. Offer healthy recipes that can be made in bulk and easily reheated or re-purposed for multiple meals throughout the week.</p>
+
+<p><strong>Monday</strong>: On Mondays, when the app&rsquo;s popularity peaks, emphasize fresh starts and motivation. Offer a &ldquo;Recipe of the Week&rdquo; that aligns with users&rsquo; dietary preferences and is easy to prepare.</p>
+
+<p><strong>Tuesday to Friday</strong>: Focus on offering quick and easy recipes for lunch and dinner that can be prepared in less time. This will cater to users who have limited time for cooking during the workweek. Include healthy meal options that can be easily packed for lunch or made in advance.</p>
+
+<p><strong>Saturday</strong>: As popularity increases again on Saturdays, consider offering healthy weekend brunch ideas or dishes suitable for social gatherings</p>
         </div>
       </div>
     </div>
