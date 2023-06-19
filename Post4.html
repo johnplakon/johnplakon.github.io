@@ -103,17 +103,17 @@ pre {
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
   <h2 class="section-heading">Introduction</h2>
-  <p>The data we will be looking at comes from an app that allows users to view numerous recipes provided. We will be exploring the data to see if we can get some actionable insights out of the data for the product team</p>
+  <p>We will analyze data extracted from a mobile application that offers users access to a wide range of recipes. Our objective is to extract valuable insights from this data to benefit the product team.</p>
 
-<h1>Is there a statistically significant difference in the number of recipe views per session by PRO users between main platforms?</h1>
+<p>Can we identify a statistically significant disparity in the number of recipe views per session among PRO users across different primary platforms?</p>
 
-<h2 class="section-heading">Data Cleaning and preparation</h2>
+<h2 class="section-heading">Data Cleansing and Preparation</h2>
 
 <ul>
-	<li>For our case, we will only be looking at &ldquo;Pro&rdquo; customers.</li>
-	<li>Remove Huawei as a platform since it has very low traffic and would not be considered a &ldquo;main platform&rdquo;</li>
-	<li>Only filter for &ldquo;recipe.detail&rdquo; event name based on my assumption that it is actually when the user engages with the product</li>
-	<li>Remove any recipes that do not have a recipe_id</li>
+<li> Our analysis will focus exclusively on customers classified as 'Pro.' </li>
+<li> Excluding Huawei as a platform due to its minimal traffic and non-significant status as a 'main platform.' </li>
+<li> Applying a filter to only consider the 'recipe.detail' event, assuming it signifies user interaction with the product. </li>
+<li> Eliminating any recipes lacking a valid recipe_id. </li>
 </ul>
 
 <pre><code>
@@ -203,15 +203,15 @@ p3 &lt;- recipes %&gt;%
 <p><img alt="" src="img/p4img1.jpg" style="height:800px; width:1000px" /></p>
 
 <ul>
-	<li>We can see that there is a slight difference between ios and android when calculating views per session.</li>
-	<li>User engagement is highest on Sunday and drops as the week moves along to it its lowest values on Saturday</li>
-	<li>Losing weight is the most popular goal in both platforms</li>
-	<li>Since this is only 1 weeks worth of data, it might not actually be representative of actual customer engagement</li>
+<li> There is a marginal variance observed between iOS and Android platforms when computing views per session. </li>
+<li> Sunday exhibits the highest user engagement, which gradually declines throughout the week, reaching its lowest point on Saturday. </li>
+<li> Both platforms demonstrate a strong preference for weight loss as the primary goal. </li>
+<li> However, given that this data encompasses only one week, it may not accurately reflect overall customer engagement. </li>
 </ul>
 
-<h2 class="section-heading">Proving Statistical Significance</h2>
+<h2 class="section-heading">Establishing Statistical Significance</h2>
 
-<p>To statistically prove the difference between the two platforms, we would need a big enough sample. For this reason, we will calculate number of views per session on a platform and user_id level</p>
+<p>To establish statistical significance between the two platforms, a sufficiently large sample is required. Consequently, we will assess the number of views per session at both the platform and user_id levels.</p>
 
 <pre><code>
 #Calculating views per session on a user level for each platform
@@ -249,14 +249,14 @@ library(car)
 leveneTest(views ~ platform, data = views_per_platform_session)</code></pre>
 
 <ul>
-	<li>Our data does not follow a normal distribution</li>
-	<li>The Levene&rsquo;s test shows there is significant evidence that the variances between the two groups are not equal</li>
-	<li>Since the data is not normal and the variances are different, we cannot use a t-test</li>
-	<li>A possible alternative for us is the Mann-Whitney U test. It is easy to interpret and good at handling outliers like in our case</li>
-	<li>It makes fewer assumptions than parametric tests like the t-test, which requires the data to be normally distributed and have equal variances.</li>
+<li> The distribution of our data deviates from a normal distribution. </li>
+<li> The Levene's test provides substantial evidence indicating unequal variances between the two groups. </li>
+<li> Given the non-normal distribution and disparate variances, a t-test cannot be employed. </li>
+<li> An alternative approach for our analysis is the Mann-Whitney U test, which is adept at accommodating outliers, as in our scenario, and offers straightforward interpretation. </li>
+<li> The Mann-Whitney U test requires fewer assumptions compared to parametric tests like the t-test, which mandate normal distribution and equal variances. </li>
 </ul>
 
-<h2 class="section-heading">Running the statistical test</h2>
+<h2 class="section-heading">Conducting the Statistical Test</h2>
 
 <pre><code>
 # subset the data for the two platforms
@@ -284,9 +284,9 @@ mwu_test</code></pre>
 ## W = 153841068, p-value = 3.003e-15
 ## alternative hypothesis: true location shift is not equal to 0</code></pre>
 
-<p>The test result shows a p-value of 3.003e-15, which means that the difference between the two groups is statistically significant. The alternative hypothesis is that the true location shift (median difference) is not equal to zero. Therefore, we can conclude that there is a significant difference between the android data and ios data groups in terms of the number of views per session.</p>
+<p>The test outcome reveals a p-value of 3.003e-15, indicating a statistically significant difference between the two groups. The alternative hypothesis suggests that the true location shift (median difference) is not zero. Thus, we can infer that a significant disparity exists between the Android and iOS data groups regarding the number of views per session.</p>
 
-<p>We could also use the Hodges-Lehmann estimator to determine the magnitude of the difference. The Hodges-Lehmann estimator is a non-parametric method for calculating the median difference between two groups.</p>
+<p>Additionally, we can employ the Hodges-Lehmann estimator to quantify the magnitude of the difference. This estimator, a non-parametric technique, enables us to compute the median difference between the two groups.</p>
 
 <pre><code>
 library(effsize)
@@ -303,23 +303,23 @@ cohen.d(android_data, ios_data, paired=FALSE, method=&quot;hedges&quot;)</code><
 ##       lower       upper 
 ## -0.02708118  0.01445788</code></pre>
 
-<h2 class="section-heading">Key takeaways</h2>
+<h2 class="section-heading">Key Insights</h2>
 
 <ul>
-	<li>Our test shows that there is a statistically significant difference in user engagement between the ios and android users,</li>
-	<li>But the difference is so small that it may not have practical importance or impact.</li>
-	<li>The product team may consider focusing on other factors that have a more significant impact on user engagement, or they may investigate further to identify the underlying reasons for the small difference between the two platforms.</li>
+<li> Our analysis reveals a statistically significant distinction in user engagement between iOS and Android users. </li>
+<li> However, the observed difference is minimal, potentially lacking practical significance or impact. </li>
+<li> The product team may choose to prioritize other factors that exert a more substantial influence on user engagement or conduct further investigations to understand the underlying reasons behind the marginal disparity between the two platforms. </li>
 </ul>
 
-<h1>What makes a recipe &ldquo;Successful&rdquo;?</h1>
+<p>Determining Recipe &ldquo;Success&ldquo;</p>
 
 <ul>
-	<li>To measure the popularity/success of a recipe, we will be calculating the geometric mean of&nbsp;<strong>views</strong>&nbsp;<strong>per session</strong>&nbsp;and&nbsp;<strong>views per user</strong></li>
-	<li>This approach will give equal weight to both metrics while accounting for differences in their scales and emphasizing recipes that have a balanced performance in both metrics.</li>
-	<li>As reference, the overall average pop index is&nbsp;<strong>1.22</strong></li>
+<li> To gauge the popularity or success of a recipe, we will compute the geometric mean of both views per session and views per user. </li>
+<li> This approach assigns equal importance to both metrics while accommodating variations in their scales and highlighting recipes that demonstrate well-rounded performance across both measures. </li>
+<li> As a reference, the overall average popularity index stands at 1.22. </li>
 </ul>
 
-<h2 class="section-heading">Data preparation and transformation</h2>
+<h2 class="section-heading">Data Preparation and Transformation</h2>
 
 <pre><code>
 #loading our recipe usage data and creating week columns
@@ -361,7 +361,7 @@ combined &lt;- df1 %&gt;%
 
 <h2 class="section-heading">Weekends vs Weekdays</h2>
 
-<p>Lets aggregate our data to see to see the share of recipes that are more popular on weekends than weekdays and vice versa</p>
+<p>We will consolidate our data to examine the proportion of recipes that exhibit higher popularity on weekends compared to weekdays, as well as vice versa.</p>
 
 <pre><code>
 combined %&gt;%
@@ -383,9 +383,9 @@ ggplot(aes(x = category, y = cnt, fill = category)) +
 
 <p><img alt="" src="img/p4img3.jpg" style="height:500px; width:700px" /></p>
 
-<p>Its interesting to see that more than&nbsp;<strong>50%</strong>&nbsp;of recipes are more popular on weekdays than on the weekends but the popularity index for both categories of recipes is almost the same. Lets take a look on a day level</p>
+<p>It is intriguing to note that over 50% of recipes garner greater popularity on weekdays than on weekends, yet the popularity index remains nearly identical for both recipe categories. Now, let's delve into the data on a daily basis to gain further insights.</p>
 
-<h2 class="section-heading">Daily seasonality of the popularity index</h2>
+<h2 class="section-heading">Daily Fluctuations in Popularity Index</h2>
 
 <pre><code>
 recipe_usage %&gt;%
@@ -412,31 +412,31 @@ recipe_usage %&gt;%
 
 <p><img alt="" src="img/p4img4.jpg" style="height:467px; width:1000px" /></p>
 
-<h2 class="section-heading">Key Takeaways</h2>
+<h2 class="section-heading">Key Insights</h2>
 
-<p>Interestingly, we have more popular recipes on the weekdays (<strong>1073 recipes</strong>) vs on the weekends (<strong>865 recipes</strong>)</p>
+<p>It is worth noting that we observe a higher number of popular recipes on weekdays (1073 recipes) compared to weekends (865 recipes).</p>
 
-<p>This is due to a seasonal aspect to the data where the popularity is the lowest on Sundays (&nbsp;<strong>Avg 1.20 popularity index</strong>) then peaks on Mondays (<strong>Avg 1.23 popularity index</strong>) and gets lower as the week progresses until peaking again on Saturday(<strong>Avg 1.23 popularity index</strong>). For arguments sake, we will assume this a significant difference. This could be due to:</p>
+<p>This discrepancy can be attributed to a seasonal pattern within the data, where popularity is at its lowest on Sundays (average popularity index of 1.20) but reaches its peak on Mondays (average popularity index of 1.23). As the week progresses, popularity gradually declines until it rises again on Saturdays (average popularity index of 1.23). For the sake of our analysis, let's assume this difference is significant. Potential reasons for this trend include:</p>
 
-<p><strong>Weekend vs. weekday mindset</strong>: Users may view Sundays as a day to relax, indulge, or spend time with family, resulting in lower engagement with the fitness recipe app. On the other hand, Mondays often represent the start of a new week and the resumption of healthy routines, which could lead to increased usage of the app.</p>
+<p>Weekend vs. weekday mindset: Users may perceive Sundays as a day for relaxation, indulgence, or spending time with family, resulting in lower engagement with the fitness recipe app. Conversely, Mondays often represent the start of a new week and a renewed focus on healthy routines, leading to increased app usage.</p>
 
-<p><strong>Meal planning</strong>: Many people plan their meals for the week on Sundays and Mondays. As the week progresses, users may already have a plan in place and therefore spend less time on the app.</p>
+<p>Meal planning: Many individuals plan their meals for the week on Sundays and Mondays. As the week progresses, users may already have their meal plans in place, resulting in less time spent on the app.</p>
 
-<p><strong>Motivation</strong>: Users might be more motivated to follow a healthy lifestyle at the beginning of the week. This motivation could wane as the week goes on, leading to decreased engagement with the app.</p>
+<p>Motivation: Users might feel more motivated to pursue a healthy lifestyle at the beginning of the week. However, as the week progresses, this motivation could wane, leading to decreased engagement with the app.</p>
 
-<p>The product team could:</p>
+<p>The product team could consider the following actions:</p>
 
-<p><strong>Sunday</strong>: Since Sundays have the lowest popularity, provide meal planning tools and meal prep ideas to help users prepare for the week ahead. Offer healthy recipes that can be made in bulk and easily reheated or re-purposed for multiple meals throughout the week.</p>
+<p>Sunday: Since Sundays demonstrate the lowest popularity, provide users with meal planning tools and meal prep ideas to help them prepare for the upcoming week. Offer healthy recipes that can be prepared in larger quantities and easily reheated or repurposed for multiple meals throughout the week.</p>
 
-<p><strong>Monday</strong>: On Mondays, when the app&rsquo;s popularity peaks, emphasize fresh starts and motivation. Offer a &ldquo;Recipe of the Week&rdquo; that aligns with users&rsquo; dietary preferences and is easy to prepare.</p>
+<p>Monday: Capitalize on the peak popularity observed on Mondays by emphasizing fresh starts and motivation. Feature a "Recipe of the Week" that aligns with users' dietary preferences and is easy to prepare.</p>
 
-<p><strong>Tuesday to Friday</strong>: Focus on offering quick and easy recipes for lunch and dinner that can be prepared in less time. This will cater to users who have limited time for cooking during the workweek. Include healthy meal options that can be easily packed for lunch or made in advance.</p>
+<p>Tuesday to Friday: Focus on providing quick and easy recipes for lunch and dinner, suitable for users with limited cooking time during the workweek. Include healthy meal options that can be easily packed for lunch or prepared in advance.</p>
 
-<p><strong>Saturday</strong>: As popularity increases again on Saturdays, consider offering healthy weekend brunch ideas or dishes suitable for social gatherings</p>
+<p>Saturday: As popularity increases again on Saturdays, consider offering healthy brunch ideas or dishes suitable for social gatherings.</p>
 
-<h1>Other factors affecting popularity</h1>
+<p>Additional Factors Affecting Popularity</p>
 
-<h2 class="section-heading">By Difficulty</h2>
+<h2 class="section-heading">Categorization by Difficulty</h2>
 
 <pre><code>
 recipe_usage %&gt;%
@@ -464,9 +464,9 @@ recipe_usage %&gt;%
 
 <p><img alt="" src="p4img5.jpg" style="height:500px; width:700px" /></p>
 
-<p>Users prefer easy (<strong>1.22 pop index</strong>) and normal (<strong>1.23 pop index</strong>) difficulty recipes, the team could prioritize adding more of these recipes to the app and highlighting them on the main page or in recommendations as compared to harder recipes that have a low pop index of&nbsp;<strong>1.15</strong></p>
+<p>User Preference for Easy (1.22 popularity index) and Normal (1.23 popularity index) Difficulty Recipes suggests that the team should prioritize increasing the availability of such recipes within the app. These recipes could be prominently featured on the main page or recommended to users, in contrast to harder recipes that exhibit a lower popularity index of 1.15.</p>
 
-<h2 class="section-heading">Number of steps taken to cook vs popularity</h2>
+<h2 class="section-heading">Relationship between Number of Cooking Steps and Popularity</h2>
 
 <pre><code>
 d1 &lt;- recipe_usage %&gt;%
@@ -500,15 +500,17 @@ d1 &lt;- recipe_usage %&gt;%
 
 <p><img alt="" src="img/p4img6.jpg" style="height:334px; width:1000px" /></p>
 
-<p>Looking at the popularity index by the steps to cook a recipe, It seems recipes that have between&nbsp;<strong>3&ndash;7</strong>&nbsp;steps are more popular (<strong>avg 1.23 pop index</strong>). There could be several reasons why recipes with a lower or higher number of steps are less popular. Here are some possibilities:</p>
+<p>Upon reviewing the popularity index in relation to the number of steps required to cook a recipe, it becomes apparent that recipes with 3-7 steps are more popular, with an average popularity index of 1.23. There could be various reasons why recipes with a lower or higher number of steps have lower popularity. Here are some potential explanations:</p>
 
 <ul>
-	<li><strong>Complexity</strong>: Recipes with too few or too many steps may be perceived as too easy or too difficult, respectively. People may prefer recipes that challenge them a little but are still easy enough to follow.</li>
-	<li><strong>Time</strong>: Recipes with too few or too many steps may also take too little or too much time to prepare, respectively. People may prefer recipes that are quick and easy to follow but still have delicious results.</li>
-	<li><strong>Variety</strong>: Recipes with too few or too many steps may also lack variety in terms of flavors and ingredients. People may prefer recipes that have a good balance of flavors and textures, and that use a variety of ingredients to keep things interesting.</li>
+<li> Complexity: Recipes with too few or too many steps might be perceived as overly simple or excessively complex. People may prefer recipes that provide a moderate challenge while still being manageable to follow. </li>
+
+<li> Time: Recipes with too few or too many steps could also involve insufficient or excessive preparation time, respectively. Individuals may favor recipes that are quick and easy to follow, while still yielding delightful results. </li>
+
+<li> Variety: Recipes with too few or too many steps might lack diversity in terms of flavors and ingredients. People may prefer recipes that strike a balance in flavors, textures, and incorporate a variety of ingredients to keep things interesting. </li>
 </ul>
 
-<h2 class="section-heading">What about Portion Count?</h2>
+<h2 class="section-heading">Exploring Portion Count</h2>
 
 <pre><code>
 recipe_usage %&gt;%
@@ -539,16 +541,19 @@ recipe_usage %&gt;%
 
 <p><img alt="" src="img/p4img7.jpg" style="height:334px; width:1000px" /></p>
 
-<p>Recipes in the&nbsp;<strong>1&ndash;4</strong>&nbsp;portion count range are the most popular with an average popularity index of&nbsp;<strong>1.23</strong>. This could be due to:</p>
+<p>Recipes within the 1-4 portion count range demonstrate the highest popularity, with an average popularity index of 1.23. Several factors may contribute to this phenomenon:</p>
 
 <ul>
-	<li>Smaller households: Most households may consist of fewer people, so recipes with smaller portion sizes are more appealing.</li>
-	<li>Individual preferences: Users might prefer cooking smaller portions to cater to their personal tastes or dietary needs.</li>
-	<li>Meal prep and planning: Smaller portion sizes can be convenient for users who want to prepare meals for one or a few days, avoiding food waste and ensuring freshness.</li>
-	<li>Easier to scale: Smaller portion recipes can be easier to scale up or down based on the user&rsquo;s needs.</li>
+<li> Smaller households: Since many households consist of fewer individuals, recipes with smaller portion sizes tend to be more appealing. </li>
+
+<li> Individual preferences: Users may prefer cooking smaller portions to accommodate their personal tastes or dietary requirements. </li>
+
+<li> Meal preparation and planning: Smaller portion sizes can be convenient for users who engage in meal prep and planning, allowing them to prepare meals for one or a few days without experiencing food waste or compromising freshness. </li>
+
+<li> Ease of scaling: Recipes with smaller portions are often easier to scale up or down, enabling users to adapt them to their specific needs. </li>
 </ul>
 
-<h2 class="section-heading">Are longer recipes that take too long to make less popular?</h2>
+<h2 class="section-heading">Are Longer Recipes with Lengthy Cooking Times Less Popular?</h2>
 
 <pre><code>
 recipe_usage %&gt;%
@@ -581,9 +586,9 @@ recipe_usage %&gt;%
 
 <p><img alt="" src="img/p4img8.jpg" style="height:334px; width:1000px" /></p>
 
-<p>Recipes&nbsp;<strong>&lt;=25 mins</strong>&nbsp;or&nbsp;<strong>&lt;50 mins</strong>&nbsp;are definitely more popular (<strong>1.25 pop index</strong>) in terms of popularity index and the number of hits that they get. We have removed outliers&nbsp;<strong>(&gt;200 mins)</strong>&nbsp;to remove noise and present a more aesthetic visual</p>
+<p>Recipes with a cooking time of 25 minutes or less or less than 50 minutes exhibit higher popularity (1.25 popularity index) based on both their popularity index and the number of hits they receive. To enhance visual clarity and eliminate unnecessary noise, we have excluded outliers with cooking times exceeding 200 minutes.</p>
 
-<h2 class="section-heading">Unnest the recipe tags and see how they influence recipe success</h2>
+<h2 class="section-heading">Exploring the Impact of Recipe Tags on Recipe Success by Unnesting</h2>
 
 <pre><code>
 top20_rec &lt;- recipe_usage %&gt;% 
@@ -646,19 +651,19 @@ top20_rec+bottom20_rec</code></pre>
 
 <p><img alt="" src="img/p4img9.jpg" style="height:534px; width:1000px" /></p>
 
-<p>Based on the order of tags from most popular to least popular, we can infer the following:</p>
+<p>Drawing Insights from the Order of Tags, from Most to Least Popular:</p>
 
 <ul>
-	<li><strong>Casseroles, meat, and soup</strong>&nbsp;are among the top three tags, suggesting that users prefer hearty, filling meals.</li>
-	<li><strong>Lunch</strong>&nbsp;is a popular tag, indicating that users are interested in recipes that are quick and easy to prepare for a midday meal.</li>
-	<li><strong>High protein, low fat, and low calorie</strong>&nbsp;are popular tags, suggesting that users are conscious of their health and looking for recipes that fit their dietary needs.</li>
-	<li>The presence of multiple calorie tags&nbsp;<strong>(500kcal, 400kcal, 300kcal, etc.)</strong>&nbsp;suggests that users are interested in recipes that are lower in calories and can &mdash; help them maintain a healthy weight. But they are not as interested in super low calories&nbsp;<strong>(50kcal,100kcal)</strong>&nbsp;which might not be filling enough or recipes that are too high in calories&nbsp;<strong>(700kcal)</strong></li>
-	<li>clean eating, and detox are also popular tags, indicating that users are interested in incorporating more healthy foods into their diet.</li>
-	<li><strong>Baking</strong>&nbsp;and&nbsp;<strong>dessert</strong>&nbsp;tags appear towards the end of the list, suggesting that users may be less interested in indulgent treats and more focused on healthy, nutritious meals.</li>
-	<li><strong>Breakfast</strong>&nbsp;is not as popular as dinner and lunch. Probably due to people not having enough time in the early morning</li>
+<li> Casseroles, meat, and soup emerge as the top three tags, indicating that users prefer substantial and satisfying meals. </li>
+<li> The tag 'lunch' signifies users' interest in quick and convenient recipes suitable for midday meals. </li>
+<li> Popular tags such as 'high protein,' 'low fat,' and 'low calorie' suggest that users prioritize health-conscious choices and seek recipes that align with their dietary needs. </li>
+<li> The presence of multiple calorie tags (e.g., 500kcal, 400kcal, 300kcal) indicates users' preference for lower-calorie recipes that can assist in maintaining a healthy weight. However, extremely low-calorie options (e.g., 50kcal, 100kcal) might be less appealing, as they may not provide sufficient satiety, while excessively high-calorie recipes (e.g., 700kcal) may also be less favored. </li>
+<li> Tags such as 'clean eating' and 'detox' demonstrate popularity, indicating users' interest in incorporating healthier food choices into their diets. </li>
+<li> Tags related to baking and desserts appear towards the end of the list, suggesting that users prioritize nutritious meals over indulgent treats. </li>
+<li> Interestingly, 'breakfast' tags are less popular compared to 'dinner' and 'lunch,' possibly due to time constraints in the early morning. </li>
 </ul>
 
-<h2 class="section-heading">Analyzing the recipe descriptions</h2>
+<h2 class="section-heading">Exploring Recipe Descriptions for Further Analysis</h2>
 
 <pre><code>
 library(tidytext)
@@ -706,27 +711,29 @@ tidy_description %&gt;%
 <p><img alt="" src="img/p4img10.jpg" style="height:534px; width:1000px" /></p>
 
 <ul>
-	<li><strong>Meal</strong>&nbsp;and&nbsp;<strong>dish</strong>&nbsp;are commonly used words that imply users are looking for a full, satisfying meal, rather than just a snack or side dish.</li>
-	<li><strong>Prepare</strong>&nbsp;and&nbsp;<strong>ingredients</strong>&nbsp;suggest that users are interested in learning how to cook and create new dishes from scratch.</li>
-	<li><strong>Delicious</strong>&nbsp;implies that taste is an important factor in recipe selection, which is not surprising since the ultimate goal of cooking is to create tasty meals.</li>
-	<li><strong>Time</strong>&nbsp;and&nbsp;<strong>easy</strong>&nbsp;suggest that users are looking for recipes that are not too time-consuming or complicated to prepare.</li>
-	<li><strong>Day</strong>&nbsp;implies that users may be interested in recipes that are suitable for a particular time of day, such as breakfast, lunch, or dinner.</li>
-	<li><strong>Salad</strong>&nbsp;and&nbsp;<strong>protein</strong>&nbsp;suggest that users may be interested in healthy recipes that incorporate fresh ingredients and provide balanced nutrition.</li>
-	<li><strong>Perfect</strong>&nbsp;and&nbsp;<strong>fresh</strong>&nbsp;imply that users are looking for recipes that are high-quality and satisfying.</li>
-	<li><strong>Tip</strong>&nbsp;suggests that users may be interested in learning cooking techniques and tricks to improve their skills.</li>
+<li> Meal and dish are commonly used words that imply users are looking for a full, satisfying meal, rather than just a snack or side dish. </li>
+<li> Prepare and ingredients suggest that users are interested in learning how to cook and create new dishes from scratch. </li>
+<li> Delicious implies that taste is an important factor in recipe selection, which is not surprising since the ultimate goal of cooking is to create tasty meals. </li>
+<li> Time and easy suggest that users are looking for recipes that are not too time-consuming or complicated to prepare. </li>
+<li> Day implies that users may be interested in recipes that are suitable for a particular time of day, such as breakfast, lunch, or dinner. </li>
+<li> Salad and protein suggest that users may be interested in healthy recipes that incorporate fresh ingredients and provide balanced nutrition. </li>
+<li> Perfect and fresh imply that users are looking for recipes that are high-quality and satisfying. </li>
+<li> Tip suggests that users may be interested in learning cooking techniques and tricks to improve their skills. </li>
 </ul>
 
-<h1>Conclusion</h1>
+<h2 class="section-heading">Conclusion</h2>
 
-<p>The goal of this analysis was to give you a glimpse of what a real-world product analytics project looks like. I also focused on generating actionable insights from our data rather than doing a generic exploratory data analysis. This because as analysts, our goal is to illicit some kind of action from our stakeholders based on our analysis</p>
+<p>This analysis provides insights into the dynamics of a real-world product analytics project, emphasizing the generation of actionable insights from the data. Rather than a generic exploratory data analysis, the focus here is on driving specific actions from stakeholders based on our analysis.</p>
 
-<p><strong>Sunday</strong>: Since Sundays have the lowest popularity, provide meal planning tools and meal prep ideas to help users prepare for the week ahead. Offer healthy recipes that can be made in bulk and easily reheated or re-purposed for multiple meals throughout the week.</p>
+<p>Recommendations for Each Day of the Week:</p>
 
-<p><strong>Monday</strong>: On Mondays, when the app&rsquo;s popularity peaks, emphasize fresh starts and motivation. Offer a &ldquo;Recipe of the Week&rdquo; that aligns with users&rsquo; dietary preferences and is easy to prepare.</p>
+<p>Sunday: As Sundays exhibit lower popularity, consider providing users with meal planning tools and meal prep ideas to help them prepare for the upcoming week. Offer healthy recipes that can be prepared in bulk, facilitating reheating or repurposing for multiple meals throughout the week.</p>
 
-<p><strong>Tuesday to Friday</strong>: Focus on offering quick and easy recipes for lunch and dinner that can be prepared in less time. This will cater to users who have limited time for cooking during the workweek. Include healthy meal options that can be easily packed for lunch or made in advance.</p>
+<p>Monday: Capitalize on the peak popularity on Mondays by emphasizing fresh starts and motivation. Feature a "Recipe of the Week" that aligns with users' dietary preferences and is easy to prepare.</p>
 
-<p><strong>Saturday</strong>: As popularity increases again on Saturdays, consider offering healthy weekend brunch ideas or dishes suitable for social gatherings</p>
+<p>Tuesday to Friday: Cater to users with limited cooking time during the workweek by focusing on quick and easy recipes for lunch and dinner. Include healthy meal options that are convenient for packing lunch or preparing in advance.</p>
+
+	<p>Saturday: Responding to the increased popularity on Saturdays, consider offering healthy brunch ideas or dishes suitable for social gatherings.</p>
         </div>
       </div>
     </div>
