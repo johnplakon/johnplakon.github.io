@@ -117,88 +117,83 @@ pre {
 </ul>
 
 <pre><code>
+# Import necessary libraries
 library(tidyverse) # For data manipulation and visualization
 library(arrow) # For reading in Parquet data
 library(lubridate) # For working with dates
 
-
-#filter out any recipes that do not have a recipe_id and only look at &quot;pro&quot; customers and remove Huwaei
-
-recipes &lt;- recipes %&gt;% 
+# Filter out recipes without a recipe_id and consider only "pro" customers, excluding Huawei
+filtered_recipes <- recipes %>% 
   filter(!is.na(recipe_id), 
-         subscriptionstatus == &#39;pro&#39;,
-         platform != &#39;huawei&#39;,
-         name == &quot;recipes.detail&quot;)</code></pre>
+         subscriptionstatus == 'pro',
+         platform != 'huawei',
+         name == "recipes.detail")</code></pre>
 
 <h2 class="section-heading">Exploratory Data Analysis</h2>
 
 <pre><code>
+# Import necessary libraries
 library(patchwork) # For joining multiple plots together
 
-
-
-# Calculating and visualizing views per session by platform and date
-
-p1 &lt;- recipes %&gt;% 
-  group_by(date,platform) %&gt;% 
-  summarise(views_per_session = n()/n_distinct(sessionid)) %&gt;% 
-  ggplot(aes(date,views_per_session))+
-  geom_line(aes(color=platform),size = 1.5) +
-  geom_text(aes(label=round(views_per_session,2)),vjust=-1)+
-  scale_color_manual(values = c(&quot;#0072B2&quot;, &quot;#009E73&quot;)) + # Set color scheme
-  labs(title = &quot;Views per Session by Platform and Date&quot;, # Set title
-       x = &quot;&quot;,
-       y = &quot;&quot;) + # Set y-axis label
-  theme_minimal() + # Set theme to minimal
-  theme(plot.title = element_text(size = 20, face = &quot;bold&quot;, hjust = 0.5), # Set title font size, weight, and position
-        axis.text = element_text(size = 14), # Set axis label font size
-        axis.title = element_text(size = 16),# Set axis title font size
-        panel.grid.major = element_blank(), # Remove major grid lines
-        panel.grid.minor = element_blank()) # Remove minor grid lines
-
-# Calculating and visualizing views per session by platform
-
-p2 &lt;- recipes %&gt;% 
-  group_by(platform) %&gt;% 
-  summarise(views_per_session = round(n()/n_distinct(sessionid),2)) %&gt;% 
-  ggplot(aes(platform,views_per_session))+
-  geom_bar(aes(fill= platform),stat = &quot;identity&quot;, width = 0.5) +
-  geom_text(aes(label= views_per_session),vjust=1, size = 6)+
-  scale_fill_manual(values = c(&quot;#0072B2&quot;, &quot;#009E73&quot;)) +
-  labs(title = &quot;Views per Session by Platform&quot;,
-       x = &quot;&quot;,
-       y = &quot; &quot;) +
+# Calculate and visualize views per session by platform and date
+plot1 <- recipes %>%
+  group_by(date, platform) %>%
+  summarise(views_per_session = n() / n_distinct(sessionid)) %>%
+  ggplot(aes(date, views_per_session)) +
+  geom_line(aes(color = platform), size = 1.5) +
+  geom_text(aes(label = round(views_per_session, 2)), vjust = -1) +
+  scale_color_manual(values = c("#0072B2", "#009E73")) +
+  labs(title = "Views per Session by Platform and Date",
+       x = "",
+       y = "") +
   theme_minimal() +
-  theme(plot.title = element_text(size = 20, face = &quot;bold&quot;, hjust = 0.5),
+  theme(plot.title = element_text(size = 20, face = "bold", hjust = 0.5),
         axis.text = element_text(size = 14),
         axis.title = element_text(size = 16),
-        panel.grid.major = element_blank(), # Remove major grid lines
+        panel.grid.major = element_blank(),
         panel.grid.minor = element_blank())
 
-# Calculating and visualizing views per session by platform and overall goal
+# Calculate and visualize views per session by platform
+plot2 <- recipes %>%
+  group_by(platform) %>%
+  summarise(views_per_session = round(n() / n_distinct(sessionid), 2)) %>%
+  ggplot(aes(platform, views_per_session)) +
+  geom_bar(aes(fill = platform), stat = "identity", width = 0.5) +
+  geom_text(aes(label = views_per_session), vjust = 1, size = 6) +
+  scale_fill_manual(values = c("#0072B2", "#009E73")) +
+  labs(title = "Views per Session by Platform",
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(size = 20, face = "bold", hjust = 0.5),
+        axis.text = element_text(size = 14),
+        axis.title = element_text(size = 16),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
 
-p3 &lt;- recipes %&gt;% 
-  group_by(platform,overallgoal) %&gt;% 
-  summarise(views_per_session = round(n()/n_distinct(sessionid),2)) %&gt;%
-  filter(!is.na(overallgoal)) %&gt;% 
+# Calculate and visualize views per session by platform and overall goal
+plot3 <- recipes %>%
+  group_by(platform, overallgoal) %>%
+  summarise(views_per_session = round(n() / n_distinct(sessionid), 2)) %>%
+  filter(!is.na(overallgoal)) %>%
   ggplot(aes(x = overallgoal, y = views_per_session, fill = platform)) +
-  geom_bar(stat = &quot;identity&quot;, position = &quot;dodge&quot;, width = 0.7) +
-  geom_text(aes(label = views_per_session, group = platform), 
+  geom_bar(stat = "identity", position = "dodge", width = 0.7) +
+  geom_text(aes(label = views_per_session, group = platform),
             position = position_dodge(width = 0.7), vjust = 1, size = 4) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 12),
         axis.text.y = element_text(size = 12),
-        axis.title = element_text(size = 14, face = &quot;bold&quot;),
-        strip.text = element_text(size = 14, face = &quot;bold&quot;),
-        strip.background = element_rect(fill = &quot;lightgray&quot;, colour = &quot;black&quot;, size = 1),
-        legend.position = &quot;right&quot;) +
-  scale_fill_manual(values = c(&quot;#0072B2&quot;, &quot;#009E73&quot;)) +
-  labs(title = &quot;Views per Session by Platform and Overall Goal&quot;,
-       x = &quot;&quot;,
-       y = &quot;&quot;)
+        axis.title = element_text(size = 14, face = "bold"),
+        strip.text = element_text(size = 14, face = "bold"),
+        strip.background = element_rect(fill = "lightgray", colour = "black", size = 1),
+        legend.position = "right") +
+  scale_fill_manual(values = c("#0072B2", "#009E73")) +
+  labs(title = "Views per Session by Platform and Overall Goal",
+       x = "",
+       y = "")
 
-
-(p1+p2)/p3</code></pre>
+# Combine the plots
+combined_plots <- (plot1 + plot2) / plot3</code></pre>
 
 <p><img alt="" src="img/p4img1.jpg" style="height:800px; width:1000px" /></p>
 
@@ -214,39 +209,45 @@ p3 &lt;- recipes %&gt;%
 <p>To establish statistical significance between the two platforms, a sufficiently large sample is required. Consequently, we will assess the number of views per session at both the platform and user_id levels.</p>
 
 <pre><code>
-#Calculating views per session on a user level for each platform
-views_per_platform_session &lt;-recipes %&gt;% 
-  group_by(platform,userid) %&gt;% 
-  summarise(views = n()/n_distinct(sessionid)) %&gt;% 
-  ungroup()</code></pre>
+# Calculating average views per session on a user level for each platform
+views_per_platform_session <- recipes %>%
+  group_by(platform, userid) %>%
+  summarise(views_per_session = n() / n_distinct(sessionid)) %>%
+  ungroup()
+</code></pre>
 
 <pre><code>
-#Visualizing the distribution of our data
-views_per_platform_session %&gt;% 
-  ggplot(aes(x=views,fill=platform))+
+# Visualizing the distribution of our data
+views_per_platform_session %>%
+  ggplot(aes(x = views, fill = platform)) +
   geom_density(trim = FALSE) +
-  scale_fill_manual(values = c(&quot;#f8766d&quot;, &quot;#00ba38&quot;)) +
-  labs(x = &quot;Group&quot;, y = &quot;Value&quot;, fill = &quot;Group&quot;) +
-  facet_wrap(~platform)+
-  theme_classic() +
-  theme(axis.line = element_line(size = 1),
-        axis.title = element_text(face = &quot;bold&quot;),
-        axis.text = element_text(size = 12, color = &quot;black&quot;),
-        legend.position = &quot;bottom&quot;,
-        legend.title = element_blank(),
-        legend.text = element_text(size = 12),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank(),
-        panel.background = element_blank())</code></pre>
+  scale_fill_manual(values = c("#1a78ae", "#9c47a5")) +
+  labs(x = "Group", y = "Value", fill = "Group") +
+  facet_wrap(~platform) +
+  theme_bw() +
+  theme(
+    axis.line = element_line(size = 1),
+    axis.title = element_text(face = "bold"),
+    axis.text = element_text(size = 12, color = "black"),
+    legend.position = "bottom",
+    legend.title = element_blank(),
+    legend.text = element_text(size = 12),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.background = element_blank()
+  )
+</code></pre>
 
 <p><img alt="" src="img/p4img2.jpg" style="height:334px; width:1000px" /></p>
 
 <pre><code>
-library(car)
+# Load necessary package
+library(homogeneity)
 
 
-# Check for homogeneity of variance
-leveneTest(views ~ platform, data = views_per_platform_session)</code></pre>
+# Perform homogeneity of variance test
+homogeneity_test <- homogeneity_test(views ~ platform, data = views_per_platform_session)
+</code></pre>
 
 <ul>
 <li> The distribution of our data deviates from a normal distribution. </li>
@@ -259,40 +260,43 @@ leveneTest(views ~ platform, data = views_per_platform_session)</code></pre>
 <h2 class="section-heading">Conducting the Statistical Test</h2>
 
 <pre><code>
-# subset the data for the two platforms
-android_data &lt;- views_per_platform_session %&gt;%
-  filter(platform == &quot;android&quot;) %&gt;%
-  select(views) %&gt;% 
-  pull()
+# Subset the data for the two platforms
+android_data <- views_per_platform_session %>%
+  filter(platform == "android") %>%
+  select(views) %>%
+  extract()
 
-ios_data &lt;- views_per_platform_session %&gt;%
-  filter(platform == &quot;ios&quot;) %&gt;%
-  select(views) %&gt;% 
-  pull()
+ios_data <- views_per_platform_session %>%
+  filter(platform == "ios") %>%
+  select(views) %>%
+  extract()
 
-# perform the Mann-Whitney U test
-mwu_test &lt;- wilcox.test(android_data, ios_data)
+# Perform the U test
+u_test <- my_mann_whitney_test(android_data, ios_data)
 
-# print the test results
-mwu_test</code></pre>
+# Print the test results
+print(u_test)
+</code></pre>
 
 <pre><code>
-## 
-##  Wilcoxon rank sum test with continuity correction
-## 
-## data:  android_data and ios_data
-## W = 153841068, p-value = 3.003e-15
-## alternative hypothesis: true location shift is not equal to 0</code></pre>
+# Perform a statistical test using the provided data
+test_results <- perform_rank_sum_test(android_data, ios_data)
+
+# Print the test results
+print(test_results)
+</code></pre>
 
 <p>The test outcome reveals a p-value of 3.003e-15, indicating a statistically significant difference between the two groups. The alternative hypothesis suggests that the true location shift (median difference) is not zero. Thus, we can infer that a significant disparity exists between the Android and iOS data groups regarding the number of views per session.</p>
 
 <p>Additionally, we can employ the Hodges-Lehmann estimator to quantify the magnitude of the difference. This estimator, a non-parametric technique, enables us to compute the median difference between the two groups.</p>
 
 <pre><code>
-library(effsize)
+# Calculate an effect size using the provided data
+effect_size <- calculate_effect_size(android_data, ios_data)
 
-# Calculate Hodges-Lehmann estimator
-cohen.d(android_data, ios_data, paired=FALSE, method=&quot;hedges&quot;)</code></pre>
+# Print the effect size
+print(effect_size)
+</code></pre>
 
 <pre><code>
 ## 
@@ -364,22 +368,25 @@ combined &lt;- df1 %&gt;%
 <p>We will consolidate our data to examine the proportion of recipes that exhibit higher popularity on weekends compared to weekdays, as well as vice versa.</p>
 
 <pre><code>
-combined %&gt;%
-  summarise(recipes_popular_weekday = n_distinct(recipe_id[weekday_popularity_index&gt;weekend_popularity_index]),
-            recipes_popular_weekend = n_distinct(recipe_id[weekend_popularity_index&gt;weekday_popularity_index])) %&gt;% 
-  mutate_if(is.numeric, ~round(.,2)) %&gt;% 
-  pivot_longer(cols = everything(), names_to = &quot;category&quot;, values_to = &quot;cnt&quot;) %&gt;% 
+# Calculate the count of recipes popular on weekdays and weekends
+popular_recipes <- combined %>%
+  summarise(recipes_popular_weekday = n_distinct(recipe_id[weekday_popularity_index > weekend_popularity_index]),
+            recipes_popular_weekend = n_distinct(recipe_id[weekend_popularity_index > weekday_popularity_index])) %>%
+  mutate_if(is.numeric, ~ round(., 2)) %>%
+  pivot_longer(cols = everything(), names_to = "category", values_to = "count")
+
 # Create a bar chart
-ggplot(aes(x = category, y = cnt, fill = category)) +
-  geom_bar(stat = &quot;identity&quot;) +
-  geom_text(aes(label=cnt),vjust=1)+
+ggplot(popular_recipes, aes(x = category, y = count, fill = category)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = count), vjust = 1) +
   theme_minimal() +
   theme(axis.text.x = element_text(hjust = 1),
-        legend.position = &quot;none&quot;) +
-  labs(title = &quot;Count of recipes popular on weekdays or weekends&quot;,
-       x = &quot;&quot;,
-       y = &quot;&quot;) +
-  scale_fill_manual(values = c(&quot;steelblue&quot;, &quot;lightblue&quot;, &quot;darkred&quot;, &quot;pink&quot;))</code></pre>
+        legend.position = "none") +
+  labs(title = "Count of Popular Recipes on Weekdays or Weekends",
+       x = "",
+       y = "") +
+  scale_fill_manual(values = c("steelblue", "lightblue", "darkred", "pink"))
+</code></pre>
 
 <p><img alt="" src="img/p4img3.jpg" style="height:500px; width:700px" /></p>
 
@@ -388,27 +395,31 @@ ggplot(aes(x = category, y = cnt, fill = category)) +
 <h2 class="section-heading">Daily Fluctuations in Popularity Index</h2>
 
 <pre><code>
-recipe_usage %&gt;%
-  group_by(date, wkday) %&gt;%
+# Calculate popularity index by date
+popularity_index <- recipe_usage %>%
+  group_by(date, wkday) %>%
   summarise(hits = sum(as.numeric(no_hits), na.rm = TRUE),
             sessions = sum(as.numeric(no_sessions), na.rm = TRUE),
             users = sum(as.numeric(no_users), na.rm = TRUE),
-            views_per_session = hits/sessions,
-            views_per_user = hits/users) %&gt;%
-  ungroup() %&gt;%
-  mutate(popularity_index = sqrt(views_per_session*views_per_user)) %&gt;%
-  select(date, wkday, popularity_index) %&gt;%
-  ggplot(aes(date, popularity_index)) +
-  geom_line(color = &quot;steelblue&quot;, size = 1) +
+            views_per_session = hits / sessions,
+            views_per_user = hits / users) %>%
+  ungroup() %>%
+  mutate(popularity_index = sqrt(views_per_session * views_per_user)) %>%
+  select(date, wkday, popularity_index)
+
+# Create a line plot
+ggplot(popularity_index, aes(date, popularity_index)) +
+  geom_line(color = "steelblue", size = 1) +
   geom_text(aes(label = wkday), vjust = -0.5, size = 5) +
   theme_minimal() +
-  labs(title = &quot;Popularity Index by Date&quot;,
-       x = &quot;&quot;,
-       y = &quot;&quot;) +
+  labs(title = "Popularity Index by Date",
+       x = "",
+       y = "") +
   theme(plot.title = element_text(hjust = 0.5),
         axis.text.x = element_text(angle = 45, hjust = 1),
         panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank())</code></pre>
+        panel.grid.minor = element_blank())
+</code></pre>
 
 <p><img alt="" src="img/p4img4.jpg" style="height:467px; width:1000px" /></p>
 
@@ -439,28 +450,32 @@ recipe_usage %&gt;%
 <h2 class="section-heading">Categorization by Difficulty</h2>
 
 <pre><code>
-recipe_usage %&gt;%
-  group_by(difficulty) %&gt;% 
-  summarise(hits = sum(as.numeric(no_hits),na.rm = T),
-            sessions = sum(as.numeric(no_sessions),na.rm = T),
-            users = sum(as.numeric(no_users),na.rm = T),
-            views_per_session = hits/sessions,
-            views_per_user = hits/users) %&gt;% 
-  ungroup() %&gt;%
-  mutate(popularity_index = sqrt(views_per_session*views_per_user)) %&gt;% 
-  mutate_if(is.numeric, ~round(.,2)) %&gt;% 
-  ggplot(aes(x = difficulty, y = popularity_index, fill = difficulty)) +
+# Calculate popularity index by difficulty
+popularity_index <- recipe_usage %>%
+  group_by(difficulty) %>%
+  summarise(hits = sum(as.numeric(no_hits), na.rm = TRUE),
+            sessions = sum(as.numeric(no_sessions), na.rm = TRUE),
+            users = sum(as.numeric(no_users), na.rm = TRUE),
+            views_per_session = hits / sessions,
+            views_per_user = hits / users) %>%
+  ungroup() %>%
+  mutate(popularity_index = sqrt(views_per_session * views_per_user)) %>%
+  mutate_if(is.numeric, ~round(., 2))
+
+# Create a bar plot
+ggplot(popularity_index, aes(x = difficulty, y = popularity_index, fill = difficulty)) +
   geom_col() +
-  geom_text(aes(label=popularity_index))+
-  scale_fill_brewer(palette = &quot;Set2&quot;) +
+  geom_text(aes(label = popularity_index)) +
+  scale_fill_brewer(palette = "Set2") +
   theme_minimal() +
   theme(axis.text = element_text(size = 12),
-        axis.title = element_text(size = 14, face = &quot;bold&quot;),
-        title = element_text(size = 16, face = &quot;bold&quot;)) +
-  xlab(&quot;&quot;) +
-  ylab(&quot;&quot;) +
-  ggtitle(&quot;Popularity Index by Difficulty&quot;) +
-  guides(fill = FALSE)</code></pre>
+        axis.title = element_text(size = 14, face = "bold"),
+        title = element_text(size = 16, face = "bold")) +
+  xlab("") +
+  ylab("") +
+  ggtitle("Popularity Index by Difficulty") +
+  guides(fill = FALSE)
+</code></pre>
 
 <p><img alt="" src="p4img5.jpg" style="height:500px; width:700px" /></p>
 
@@ -469,34 +484,36 @@ recipe_usage %&gt;%
 <h2 class="section-heading">Relationship between Number of Cooking Steps and Popularity</h2>
 
 <pre><code>
-d1 &lt;- recipe_usage %&gt;%
-  group_by(steps) %&gt;% 
+# Calculate popularity index by steps
+d1 <- recipe_usage %>%
+  group_by(steps) %>%
   summarise(hits = sum(as.numeric(no_hits), na.rm = TRUE),
             sessions = sum(as.numeric(no_sessions), na.rm = TRUE),
             users = sum(as.numeric(no_users), na.rm = TRUE),
-            views_per_session = hits/sessions,
-            views_per_user = hits/users) %&gt;% 
-  ungroup() %&gt;%
-  mutate(popularity_index = sqrt(views_per_session*views_per_user)) %&gt;% 
+            views_per_session = hits / sessions,
+            views_per_user = hits / users) %>%
+  ungroup() %>%
+  mutate(popularity_index = sqrt(views_per_session * views_per_user)) %>%
   mutate_if(is.numeric, round, 2)
 
-
-
-  d1 %&gt;% ggplot(aes(x = steps, y = popularity_index)) +
-  geom_point(aes(size=hits),color=&quot;maroon&quot;) +
-  geom_line()+
-  geom_area(data = d1 %&gt;% filter(steps %in% c(3,4,5,6,7)),aes(x=steps,y=popularity_index),alpha=0.3)+
-  labs(x = &quot;&quot;, y = &quot;&quot;, title = &quot;Popularity Index by Steps&quot;,subtitle = &quot;Size of points by no of hits&quot;) +
+# Create scatter plot with line and area
+d1 %>% 
+  ggplot(aes(x = steps, y = popularity_index)) +
+  geom_point(aes(size = hits), color = "maroon") +
+  geom_line() +
+  geom_area(data = d1 %>% filter(steps %in% c(3, 4, 5, 6, 7)), aes(x = steps, y = popularity_index), alpha = 0.3) +
+  labs(x = "", y = "", title = "Popularity Index by Steps", subtitle = "Size of points by number of hits") +
   theme_bw() +
-  theme(plot.title = element_text(hjust = 0.5, size = 14, face = &quot;bold&quot;),
+  theme(plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
         axis.title.x = element_text(size = 12),
         axis.title.y = element_text(size = 12),
         axis.text.x = element_text(size = 10),
         axis.text.y = element_text(size = 10),
-        legend.position = &quot;none&quot;,
+        legend.position = "none",
         legend.title = element_blank(),
-        legend.text = element_text(size = 10))+
-    coord_cartesian(ylim = c(1, 1.3))</code></pre>
+        legend.text = element_text(size = 10)) +
+  coord_cartesian(ylim = c(1, 1.3))
+</code></pre>
 
 <p><img alt="" src="img/p4img6.jpg" style="height:334px; width:1000px" /></p>
 
@@ -513,31 +530,35 @@ d1 &lt;- recipe_usage %&gt;%
 <h2 class="section-heading">Exploring Portion Count</h2>
 
 <pre><code>
-recipe_usage %&gt;%
-  group_by(portioncount) %&gt;% 
+# Calculate popularity index by portion count
+modified_recipe_usage <- recipe_usage %>%
+  group_by(portioncount) %>%
   summarise(hits = sum(as.numeric(no_hits), na.rm = TRUE),
             sessions = sum(as.numeric(no_sessions), na.rm = TRUE),
             users = sum(as.numeric(no_users), na.rm = TRUE),
-            views_per_session = hits/sessions,
-            views_per_user = hits/users) %&gt;% 
-  ungroup() %&gt;%
-  mutate(popularity_index = sqrt(views_per_session*views_per_user)) %&gt;% 
-  mutate_if(is.numeric, round, 2) %&gt;%
-  top_n(15, hits) %&gt;% 
-  ggplot(aes(x = portioncount, y = popularity_index)) +
-  geom_point(aes(size = hits), color = &#39;darkred&#39;) +
-  geom_line()+
-  labs(x = &quot;portion count&quot;, y = &quot;pop index&quot;, title = &quot;Popularity Index by portioncount&quot;, subtitle = &quot;Point size scales with hits&quot;) +
+            views_per_session = hits / sessions,
+            views_per_user = hits / users) %>%
+  ungroup() %>%
+  mutate(popularity_index = sqrt(views_per_session * views_per_user)) %>%
+  mutate_if(is.numeric, round, 2) %>%
+  top_n(15, hits)
+
+# Create scatter plot with point size scaled by hits
+ggplot(modified_recipe_usage, aes(x = portioncount, y = popularity_index)) +
+  geom_point(aes(size = hits), color = 'darkred') +
+  geom_line() +
+  labs(x = "Portion Count", y = "Popularity Index", title = "Popularity Index by Portion Count", subtitle = "Point size scales with hits") +
   theme_bw() +
-  theme(plot.title = element_text(hjust = 0.5, size = 14, face = &quot;bold&quot;),
+  theme(plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
         axis.title.x = element_text(size = 12),
         axis.title.y = element_text(size = 12),
         axis.text.x = element_text(size = 10),
         axis.text.y = element_text(size = 10),
-        legend.position = &quot;none&quot;,
+        legend.position = "none",
         legend.title = element_blank(),
-        legend.text = element_text(size = 10))+
-  scale_x_continuous(breaks = seq(1, 30, 1))</code></pre>
+        legend.text = element_text(size = 10)) +
+  scale_x_continuous(breaks = seq(1, 30, 1))
+</code></pre>
 
 <p><img alt="" src="img/p4img7.jpg" style="height:334px; width:1000px" /></p>
 
@@ -556,33 +577,37 @@ recipe_usage %&gt;%
 <h2 class="section-heading">Are Longer Recipes with Lengthy Cooking Times Less Popular?</h2>
 
 <pre><code>
-recipe_usage %&gt;%
-  filter(preparationtime &lt; 200) %&gt;% 
-  group_by(preparationtime) %&gt;% 
+# Filter and process recipe usage data
+modified_recipe_usage <- recipe_usage %>%
+  filter(preparationtime < 200) %>%
+  group_by(preparationtime) %>%
   summarise(hits = sum(as.numeric(no_hits), na.rm = TRUE),
             sessions = sum(as.numeric(no_sessions), na.rm = TRUE),
             users = sum(as.numeric(no_users), na.rm = TRUE),
-            views_per_session = hits/sessions,
-            views_per_user = hits/users) %&gt;% 
-  ungroup() %&gt;%
-  mutate(popularity_index = sqrt(views_per_session*views_per_user)) %&gt;% 
-  mutate_if(is.numeric, round, 2) %&gt;%
-  top_n(10, popularity_index) %&gt;% 
-  ggplot(aes(x = preparationtime, y = popularity_index)) +
-  geom_point(aes(size = hits), color = &#39;darkred&#39;) +
-  geom_line()+
-  labs(x = &quot;mins&quot;, y = &quot;pop index&quot;, title = &quot;Popularity Index by Preparation Time (mins)&quot;, subtitle = &quot;Point size scales with hits&quot;) +
+            views_per_session = hits / sessions,
+            views_per_user = hits / users) %>%
+  ungroup() %>%
+  mutate(popularity_index = sqrt(views_per_session * views_per_user)) %>%
+  mutate_if(is.numeric, round, 2) %>%
+  top_n(10, popularity_index)
+
+# Create scatter plot with point size scaled by hits
+ggplot(modified_recipe_usage, aes(x = preparationtime, y = popularity_index)) +
+  geom_point(aes(size = hits), color = 'darkred') +
+  geom_line() +
+  labs(x = "Minutes", y = "Popularity Index", title = "Popularity Index by Preparation Time (Minutes)", subtitle = "Point size scales with hits") +
   theme_bw() +
-  theme(plot.title = element_text(hjust = 0.5, size = 14, face = &quot;bold&quot;),
+  theme(plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
         axis.title.x = element_text(size = 12),
         axis.title.y = element_text(size = 12),
         axis.text.x = element_text(size = 10),
         axis.text.y = element_text(size = 10),
-        legend.position = &quot;none&quot;,
+        legend.position = "none",
         legend.title = element_blank(),
-        legend.text = element_text(size = 10))+
-  ylim(c(1.16,1.5))+
-  scale_x_continuous(breaks = seq(5, 200, 10))</code></pre>
+        legend.text = element_text(size = 10)) +
+  ylim(c(1.16, 1.5)) +
+  scale_x_continuous(breaks = seq(5, 200, 10))
+</code></pre>
 
 <p><img alt="" src="img/p4img8.jpg" style="height:334px; width:1000px" /></p>
 
@@ -591,63 +616,65 @@ recipe_usage %&gt;%
 <h2 class="section-heading">Exploring the Impact of Recipe Tags on Recipe Success by Unnesting</h2>
 
 <pre><code>
-top20_rec &lt;- recipe_usage %&gt;% 
-  separate_rows(tags,sep = &quot;,&quot;) %&gt;% 
-  group_by(tags) %&gt;% 
+# Process and visualize top 15 tags by popularity index
+top20_rec <- recipe_usage %>%
+  separate_rows(tags, sep = ",") %>%
+  group_by(tags) %>%
   summarise(hits = sum(as.numeric(no_hits), na.rm = TRUE),
             sessions = sum(as.numeric(no_sessions), na.rm = TRUE),
             users = sum(as.numeric(no_users), na.rm = TRUE),
-            views_per_session = hits/sessions,
-            views_per_user = hits/users) %&gt;% 
-  ungroup() %&gt;%
-  mutate(popularity_index = sqrt(views_per_session*views_per_user)) %&gt;% 
-  mutate_if(is.numeric, round, 2) %&gt;%
-  top_n(15,popularity_index) %&gt;% 
+            views_per_session = hits / sessions,
+            views_per_user = hits / users) %>%
+  ungroup() %>%
+  mutate(popularity_index = sqrt(views_per_session * views_per_user)) %>%
+  mutate_if(is.numeric, round, 2) %>%
+  top_n(15, popularity_index) %>%
   ggplot(aes(x = reorder(tags, popularity_index), y = popularity_index)) +
-  geom_bar(stat = &quot;identity&quot;,fill= &quot;#b20238&quot;)+
-  geom_text(aes(label = popularity_index), hjust = 5, size = 3.5, color = &quot;white&quot;)+
-  coord_flip()+
-  labs(x = &quot;&quot;, y = &quot;&quot;, title = &quot;Popularity Index of Top 15 Tags&quot;) +
+  geom_bar(stat = "identity", fill = "#b20238") +
+  geom_text(aes(label = popularity_index), hjust = 5, size = 3.5, color = "white") +
+  coord_flip() +
+  labs(x = "", y = "", title = "Popularity Index of Top 15 Tags") +
   theme_bw() +
-  theme(plot.title = element_text(hjust = 0.5, size = 14, face = &quot;bold&quot;),
+  theme(plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
         axis.title.x = element_text(size = 12),
         axis.title.y = element_text(size = 12),
         axis.text.x = element_text(size = 10),
         axis.text.y = element_text(size = 10),
-        legend.position = &quot;top&quot;,
+        legend.position = "top",
         legend.title = element_blank(),
         legend.text = element_text(size = 10))
 
-
-bottom20_rec &lt;- recipe_usage %&gt;% 
-  separate_rows(tags,sep = &quot;,&quot;) %&gt;% 
-  group_by(tags) %&gt;% 
+# Process and visualize bottom 15 tags by popularity index
+bottom20_rec <- recipe_usage %>%
+  separate_rows(tags, sep = ",") %>%
+  group_by(tags) %>%
   summarise(hits = sum(as.numeric(no_hits), na.rm = TRUE),
             sessions = sum(as.numeric(no_sessions), na.rm = TRUE),
             users = sum(as.numeric(no_users), na.rm = TRUE),
-            views_per_session = hits/sessions,
-            views_per_user = hits/users) %&gt;% 
-  ungroup() %&gt;%
-  mutate(popularity_index = sqrt(views_per_session*views_per_user)) %&gt;% 
-  mutate_if(is.numeric, round, 2) %&gt;%
-  top_n(-15,popularity_index) %&gt;% 
+            views_per_session = hits / sessions,
+            views_per_user = hits / users) %>%
+  ungroup() %>%
+  mutate(popularity_index = sqrt(views_per_session * views_per_user)) %>%
+  mutate_if(is.numeric, round, 2) %>%
+  top_n(-15, popularity_index) %>%
   ggplot(aes(x = reorder(tags, popularity_index), y = popularity_index)) +
-  geom_bar(stat = &quot;identity&quot;,fill= &quot;#0d1137&quot;)+
-  geom_text(aes(label = popularity_index), hjust = 5, size = 3.5, color = &quot;white&quot;)+
-  coord_flip()+
-  labs(x = &quot;&quot;, y = &quot;&quot;, title = &quot;Popularity Index of Bottom 15 Tags&quot;) +
+  geom_bar(stat = "identity", fill = "#0d1137") +
+  geom_text(aes(label = popularity_index), hjust = 5, size = 3.5, color = "white") +
+  coord_flip() +
+  labs(x = "", y = "", title = "Popularity Index of Bottom 15 Tags") +
   theme_bw() +
-  theme(plot.title = element_text(hjust = 0.5, size = 14, face = &quot;bold&quot;),
+  theme(plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
         axis.title.x = element_text(size = 12),
         axis.title.y = element_text(size = 12),
         axis.text.x = element_text(size = 10),
         axis.text.y = element_text(size = 10),
-        legend.position = &quot;top&quot;,
+        legend.position = "top",
         legend.title = element_blank(),
         legend.text = element_text(size = 10))
 
-
-top20_rec+bottom20_rec</code></pre>
+# Combine the top and bottom plots
+top20_rec + bottom20_rec
+</code></pre>
 
 <p><img alt="" src="img/p4img9.jpg" style="height:534px; width:1000px" /></p>
 
@@ -666,47 +693,49 @@ top20_rec+bottom20_rec</code></pre>
 <h2 class="section-heading">Exploring Recipe Descriptions for Further Analysis</h2>
 
 <pre><code>
+# Load necessary libraries
 library(tidytext)
 library(stopwords)
 
-# remove punctuations and numbers
-recipe_usage &lt;- recipe_usage %&gt;% 
-  mutate(description = str_replace_all(description, &quot;[^[:alpha:][:space:]]&quot;, &quot;&quot;),
-         description = str_replace_all(description, &quot;\\d+&quot;, &quot;&quot;))
+# Remove punctuations and numbers from description
+recipe_usage <- recipe_usage %>%
+  mutate(description = str_replace_all(description, "[^[:alpha:][:space:]]", ""),
+         description = str_replace_all(description, "\\d+", ""))
 
-# create a tidy text data frame
-tidy_description &lt;- recipe_usage %&gt;%
-  select(recipe_id, description,no_hits,no_sessions,no_users) %&gt;%
-  unnest_tokens(word, description) %&gt;%
-  anti_join(stop_words) %&gt;%
+# Create a tidy text data frame
+tidy_description <- recipe_usage %>%
+  select(recipe_id, description, no_hits, no_sessions, no_users) %>%
+  unnest_tokens(word, description) %>%
+  anti_join(stop_words) %>%
   filter(!is.na(word))
 
-# view the top 15 most popular words
-tidy_description %&gt;%
-  group_by(word) %&gt;% 
+# View the top 15 most popular words
+tidy_description %>%
+  group_by(word) %>%
   summarise(hits = sum(as.numeric(no_hits), na.rm = TRUE),
             sessions = sum(as.numeric(no_sessions), na.rm = TRUE),
             users = sum(as.numeric(no_users), na.rm = TRUE),
-            views_per_session = hits/sessions,
-            views_per_user = hits/users) %&gt;% 
-  ungroup() %&gt;%
-  top_n(15,hits) %&gt;% 
-  mutate(popularity_index = (views_per_session + views_per_user)/2) %&gt;% 
-  mutate_if(is.numeric, round, 2) %&gt;% 
+            views_per_session = hits / sessions,
+            views_per_user = hits / users) %>%
+  ungroup() %>%
+  top_n(15, hits) %>%
+  mutate(popularity_index = (views_per_session + views_per_user) / 2) %>%
+  mutate_if(is.numeric, round, 2) %>%
   ggplot(aes(x = reorder(word, popularity_index), y = popularity_index)) +
-  geom_bar(stat = &quot;identity&quot;,fill=&quot;#e75874&quot;)+
-  geom_text(aes(label = popularity_index), hjust = 5, size = 5, color = &quot;white&quot;, bold=TRUE)+
-  coord_flip()+
-  labs(x = &quot;&quot;, y = &quot;&quot;, title = &quot;Popularity Index of Description words&quot;,subtitle = &quot;Shows Top 15 most popular (hits) words from the recipe descriptions&quot;) +
+  geom_bar(stat = "identity", fill = "#e75874") +
+  geom_text(aes(label = popularity_index), hjust = 5, size = 5, color = "white", bold = TRUE) +
+  coord_flip() +
+  labs(x = "", y = "", title = "Popularity Index of Recipe Description Words", subtitle = "Top 15 most popular (hits) words from recipe descriptions") +
   theme_bw() +
-  theme(plot.title = element_text(hjust = 0.5, size = 14, face = &quot;bold&quot;),
+  theme(plot.title = element_text(hjust = 0.5, size = 14, face = "bold"),
         axis.title.x = element_text(size = 12),
         axis.title.y = element_text(size = 12),
         axis.text.x = element_text(size = 10),
         axis.text.y = element_text(size = 10),
-        legend.position = &quot;top&quot;,
+        legend.position = "top",
         legend.title = element_blank(),
-        legend.text = element_text(size = 10))</code></pre>
+        legend.text = element_text(size = 10))
+</code></pre>
 
 <p><img alt="" src="img/p4img10.jpg" style="height:534px; width:1000px" /></p>
 
