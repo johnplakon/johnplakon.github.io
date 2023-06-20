@@ -118,6 +118,7 @@ pre {
     First, let's perform some exploratory analysis to understand the dataset better.
   </p>
   <pre><code>
+    <h4>Count the total number of bookings in the dataset</h4>
     -- Count the total number of bookings in the dataset
     SELECT COUNT(*) AS total_bookings
     FROM hotel_reservations;
@@ -135,6 +136,7 @@ pre {
   <p>
     Next, let's examine the booking patterns by analyzing the number of adults, children, and meal plans chosen by customers.
   </p>
+  <h4>Count the number of bookings based on the number of adults</h4>
   <pre><code>
     -- Count the number of bookings based on the number of adults
     SELECT no_of_adults, COUNT(*) AS booking_count
@@ -157,6 +159,7 @@ pre {
     |      10      |      1        |
     +--------------+---------------+
   </pre>
+    <h4>Count the number of bookings based on the number of children</h4>
   <pre><code>
     -- Count the number of bookings based on the number of children
     SELECT no_of_children, COUNT(*) AS booking_count
@@ -176,6 +179,7 @@ pre {
     |       10       |       1       |
     +----------------+---------------+
   </pre>
+    <h4>Count the number of bookings based on the type of meal plan</h4>
   <pre><code>
     -- Count the number of bookings based on the type of meal plan
     SELECT type_of_meal_plan, COUNT(*) AS booking_count
@@ -199,6 +203,7 @@ pre {
   <p>
     Now, let's explore customer preferences in terms of car parking, room types, and special requests.
   </p>
+    <h4>Count the number of bookings requiring car parking space</h4>
   <pre><code>
     -- Count the number of bookings requiring car parking space
     SELECT required_car_parking_space, COUNT(*) AS booking_count
@@ -214,6 +219,7 @@ pre {
     |            1               |      71140    |
     +----------------------------+---------------+
   </pre>
+    <h4>Count the number of bookings based on the room type reserved</h4>
   <pre><code>
     -- Count the number of bookings based on the room type reserved
     SELECT room_type_reserved, COUNT(*) AS booking_count
@@ -238,6 +244,7 @@ pre {
     |        P         |     6018      |
     +------------------+---------------+
   </pre>
+    <h4>Count the number of bookings based on the number of special requests</h4>
   <pre><code>
     -- Count the number of bookings based on the number of special requests
     SELECT no_of_special_requests, COUNT(*) AS booking_count
