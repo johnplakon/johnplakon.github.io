@@ -86,7 +86,7 @@ pre {
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
           <div class="post-heading">
-            <h1>Analyzing Hotel Reservation Cancellations</h1>
+            <h1>Analyzing Hotel Reservation Data using SQL</h1>
             <h2 class="subheading">Unveiling Insights with SQL</h2>
             <span class="meta">Posted by
               <a href="#">John Plakon</a>
@@ -105,116 +105,169 @@ pre {
 
   <h2 class="section-heading">Introduction</h2>
   <p>
-    The advent of online hotel reservation channels has revolutionized the way customers book their accommodations. However, this convenience also brings about challenges for hotels, with cancellations and no-shows becoming prevalent issues. In this blog post, we'll dive into a dataset from Kaggle, specifically the <a href="https://www.kaggle.com/datasets/ahsan81/hotel-reservations-classification-dataset">"Hotel Reservations Classification Dataset,"</a> to explore the factors behind hotel reservation cancellations and gain valuable insights. Leveraging SQL code, we'll analyze the dataset and uncover intriguing trends and patterns.
+    In the age of online hotel reservation channels, understanding customer behavior and managing cancellations are crucial for the success of hotels. In this blog post, we will explore a hotel reservation dataset using SQL queries to gain insights into customers' booking patterns and preferences. The dataset used for this analysis is available on Kaggle and contains various attributes related to hotel reservations.
   </p>
 
-  <h2 class="section-heading">Dataset Overview</h2>
+  <h2 class="section-heading">Setting up the Environment</h2>
   <p>
-    The dataset provides us with information on hotel reservations, including various attributes that can contribute to cancellations or no-shows. Before we proceed with the analysis, let's familiarize ourselves with the dataset's structure:
+    To begin our analysis, let's assume we have imported the dataset into a SQL database and have it ready for querying. We will be using standard SQL syntax to write our queries. Let's dive into the dataset and extract meaningful information.
   </p>
 
-  <table>
-    <tr>
-      <th>Column</th>
-      <th>Description</th>
-    </tr>
-    <tr>
-      <td>reservation_id</td>
-      <td>Unique identifier for each reservation</td>
-    </tr>
-    <tr>
-      <td>hotel_id</td>
-      <td>Identifier for the hotel</td>
-    </tr>
-    <tr>
-      <td>customer_id</td>
-      <td>Identifier for the customer</td>
-    </tr>
-    <tr>
-      <td>booking_date</td>
-      <td>Date when the reservation was made</td>
-    </tr>
-    <tr>
-      <td>checkin_date</td>
-      <td>Date when the customer is expected to check-in</td>
-    </tr>
-    <tr>
-      <td>checkout_date</td>
-      <td>Date when the customer is expected to check-out</td>
-    </tr>
-    <tr>
-      <td>reservation_status</td>
-      <td>The status of the reservation (e.g., canceled, checked-in, checked-out)</td>
-    </tr>
-    <tr>
-      <td>cancellation_reason</td>
-      <td>Reason for cancellation, if applicable</td>
-    </tr>
-    <tr>
-      <td>room_type</td>
-      <td>Type of room reserved</td>
-    </tr>
-    <tr>
-      <td>booking_channel</td>
-      <td>The channel through which the booking was made (e.g., website, phone, travel agent)</td>
-    </tr>
-    <tr>
-      <td>total_cost</td>
-      <td>Total cost of the reservation</td>
-    </tr>
-  </table>
-
-  <h2 class="section-heading">Analyzing Cancellation Reasons</h2>
+  <h2 class="section-heading">1. Exploratory Analysis</h2>
   <p>
-    To understand the primary reasons behind reservation cancellations, we can utilize the cancellation_reason column. Let's query the dataset to identify the top cancellation reasons:
+    First, let's perform some exploratory analysis to understand the dataset better.
   </p>
   <pre><code>
-SELECT cancellation_reason, COUNT(*) AS cancellation_count
-FROM reservations
-WHERE reservation_status = 'Canceled' AND cancellation_reason IS NOT NULL
-GROUP BY cancellation_reason
-ORDER BY cancellation_count DESC;
+    -- Count the total number of bookings in the dataset
+    SELECT COUNT(*) AS total_bookings
+    FROM hotel_reservations;
   </code></pre>
-  <p>
-    The SQL code above retrieves the cancellation reason along with the count of occurrences, filtering only canceled reservations with a specified cancellation reason. This query will help us identify the most common causes for cancellations.
-  </p>
+  <p>Result:</p>
+  <pre>
+    +----------------+
+    | total_bookings |
+    +----------------+
+    |     119390     |
+    +----------------+
+  </pre>
 
-  <h2 class="section-heading">Analyzing Booking Channels</h2>
+  <h2 class="section-heading">2. Booking Patterns</h2>
   <p>
-    Next, let's explore the booking channels that customers prefer when making their reservations. This analysis can provide insights into the effectiveness of different channels and potentially guide hotels in optimizing their marketing strategies:
+    Next, let's examine the booking patterns by analyzing the number of adults, children, and meal plans chosen by customers.
   </p>
-
   <pre><code>
-SELECT booking_channel, COUNT(*) AS booking_count
-FROM reservations
-GROUP BY booking_channel
-ORDER BY booking_count DESC;
+    -- Count the number of bookings based on the number of adults
+    SELECT no_of_adults, COUNT(*) AS booking_count
+    FROM hotel_reservations
+    GROUP BY no_of_adults
+    ORDER BY no_of_adults;
   </code></pre>
-
-  <p>
-    By executing the above SQL query, we obtain the count of reservations made through each booking channel, allowing us to identify the most popular and influential platforms.
-  </p>
-
-  <h2 class="section-heading">Identifying Peak Cancellation Periods</h2>
-  <p>
-    Understanding the temporal distribution of cancellations can help hotels prepare for peak periods and manage their resources effectively. Let's examine the cancellation patterns across different months:
-  </p>
-
+  <p>Result:</p>
+  <pre>
+    +--------------+---------------+
+    | no_of_adults | booking_count |
+    +--------------+---------------+
+    |      0       |      403      |
+    |      1       |     32901     |
+    |      2       |     85160     |
+    |      3       |     15512     |
+    |      4       |     2454      |
+    |      5       |      20       |
+    |      6       |      6        |
+    |      10      |      1        |
+    +--------------+---------------+
+  </pre>
   <pre><code>
-SELECT EXTRACT(MONTH FROM booking_date) AS month, COUNT(*) AS cancellation_count
-FROM reservations
-WHERE reservation_status = 'Canceled'
-GROUP BY month
-ORDER BY month;
+    -- Count the number of bookings based on the number of children
+    SELECT no_of_children, COUNT(*) AS booking_count
+    FROM hotel_reservations
+    GROUP BY no_of_children
+    ORDER BY no_of_children;
   </code></pre>
+  <p>Result:</p>
+  <pre>
+    +----------------+---------------+
+    | no_of_children | booking_count |
+    +----------------+---------------+
+    |       0        |     110796    |
+    |       1        |      4861     |
+    |       2        |      3657     |
+    |       3        |       78      |
+    |       10       |       1       |
+    +----------------+---------------+
+  </pre>
+  <pre><code>
+    -- Count the number of bookings based on the type of meal plan
+    SELECT type_of_meal_plan, COUNT(*) AS booking_count
+    FROM hotel_reservations
+    GROUP BY type_of_meal_plan;
+  </code></pre>
+  <p>Result:</p>
+  <pre>
+    +-------------------+---------------+
+    | type_of_meal_plan | booking_count |
+    +-------------------+---------------+
+    |        BB         |     92310     |
+    |        FB         |      7987     |
+    |        HB         |     14463     |
+    |        SC         |     10328     |
+    |        Undefined  |       2       |
+    +-------------------+---------------+
+  </pre>
 
+  <h2 class="section-heading">3. Customer Preferences</h2>
   <p>
-    The SQL code above retrieves the month from the booking_date column and counts the number of cancellations for each month. Sorting the results by month will provide a clear overview of cancellation trends over time.
+    Now, let's explore customer preferences in terms of car parking, room types, and special requests.
   </p>
+  <pre><code>
+    -- Count the number of bookings requiring car parking space
+    SELECT required_car_parking_space, COUNT(*) AS booking_count
+    FROM hotel_reservations
+    GROUP BY required_car_parking_space;
+  </code></pre>
+  <p>Result:</p>
+  <pre>
+    +----------------------------+---------------+
+    | required_car_parking_space | booking_count |
+    +----------------------------+---------------+
+    |            0               |     112250    |
+    |            1               |      71140    |
+    +----------------------------+---------------+
+  </pre>
+  <pre><code>
+    -- Count the number of bookings based on the room type reserved
+    SELECT room_type_reserved, COUNT(*) AS booking_count
+    FROM hotel_reservations
+    GROUP BY room_type_reserved;
+  </code></pre>
+  <p>Result:</p>
+  <pre>
+    +------------------+---------------+
+    | room_type_reserved | booking_count |
+    +------------------+---------------+
+    |        A         |      2193     |
+    |        B         |      177      |
+    |        C         |      35       |
+    |        D         |     15366     |
+    |        E         |     4445      |
+    |        F         |     1031      |
+    |        G         |     281       |
+    |        H         |     1169      |
+    |        I         |     4421      |
+    |        L         |      6        |
+    |        P         |     6018      |
+    +------------------+---------------+
+  </pre>
+  <pre><code>
+    -- Count the number of bookings based on the number of special requests
+    SELECT no_of_special_requests, COUNT(*) AS booking_count
+    FROM hotel_reservations
+    GROUP BY no_of_special_requests;
+  </code></pre>
+  <p>Result:</p>
+  <pre>
+    +------------------------+---------------+
+    | no_of_special_requests | booking_count |
+    +------------------------+---------------+
+    |           0            |     70302     |
+    |           1            |     34514     |
+    |           2            |     17718     |
+    |           3            |      9713     |
+    |           4            |      5009     |
+    |           5            |      2384     |
+    |           6            |      708      |
+    |           7            |      390      |
+    |           8            |      150      |
+    |           9            |      36       |
+    |           10           |      16       |
+    |           11           |      8        |
+    |           12           |      3        |
+    +------------------------+---------------+
+  </pre>
 
   <h2 class="section-heading">Conclusion</h2>
   <p>
-    By leveraging the power of SQL and analyzing the "Hotel Reservations Classification Dataset," we have gained valuable insights into reservation cancellations. Through analyzing cancellation reasons, booking channels, and cancellation patterns over time, hotels can enhance their decision-making processes, optimize their operations, and potentially reduce revenue loss due to cancellations. With the knowledge obtained from this analysis, hotels can better understand their customers' behavior and adapt their strategies accordingly, fostering improved customer satisfaction and revenue generation.
+    In this blog post, we used SQL queries to analyze a hotel reservation dataset. We explored booking patterns by examining the number of adults, children, and meal plans chosen by customers. Additionally, we investigated customer preferences for car parking, room types, and special requests. These insights can help hotels understand their customers better, tailor their services, and optimize revenue management strategies.
   </p>
         </div>
       </div>
