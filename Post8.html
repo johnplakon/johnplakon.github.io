@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Attribution and Deep Link Support Lab by John Plakon">
+  <meta name="author" content="John Plakon">
+
+  <title>John Plakon</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom fonts for this template -->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+  <!-- Custom styles for this template -->
+  <link href="css/clean-blog.min.css" rel="stylesheet">
+  <style>
+    pre {
+      background: #f4f4f4;
+      border: 1px solid #ddd;
+      border-left: 3px solid #f36d33;
+      color: #666;
+      page-break-inside: avoid;
+      font-family: monospace;
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 1.6em;
+      max-width: 100%;
+      overflow: auto;
+      padding: 1em 1.5em;
+      display: block;
+      word-wrap: break-word;
+    }
+
+    code {
+      font-family: Consolas, monospace;
+      font-size: 14px;
+      background-color: #f5f5f5;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+
+    .img-fluid {
+      margin-top: 10px;
+      margin-bottom: 25px;
+    }
+  </style>
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="index.html"></a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="about.html">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="Portfolio.html">Portfolio</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="contact.html">Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('img/bg7.png')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+            <h1>Attribution and Deep Link Support Lab</h1>
+            <h2 class="subheading">Simulating Real SaaS Tracking Issues, API Debugging, and Customer-Facing Investigations</h2>
+            <span class="meta">Posted by
+              <a href="#">John Plakon</a>
+              on March 9, 2026</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+
+          <h2 class="section-heading">Introduction</h2>
+          <p>
+            This project was built to simulate the kinds of technical issues commonly encountered in mobile SaaS, mar-tech, and attribution platforms. The lab combines a lightweight event tracking API, a mock campaign link flow, SQL-based investigation queries, and support runbooks that document how issues were reproduced, diagnosed, and resolved.
+          </p>
+          <p>
+            Instead of focusing only on analytics outputs, this project emphasizes the investigative process behind technical support: inspecting payloads, validating redirects, tracing event loss, comparing raw logs against reporting tables, and translating technical findings into clear guidance for customers and internal teams.
+          </p>
+          <p>
+            The goal was to create a realistic support engineering portfolio piece that demonstrates practical troubleshooting skills with APIs, SQL, browser tools, event pipelines, and customer communication.
+          </p>
+
+          <h2 class="section-heading">Project Goals</h2>
+          <p>
+            The lab was designed around four goals:
+          </p>
+          <ul>
+            <li>Simulate attribution and deep linking workflows across click, open, install, and conversion events.</li>
+            <li>Reproduce realistic data and tracking failures that a support engineer would investigate.</li>
+            <li>Use SQL, logs, and browser network inspection to identify root causes.</li>
+            <li>Document findings in a format suitable for customer support, knowledge base articles, and engineering handoff.</li>
+          </ul>
+
+          <h2 class="section-heading">System Overview</h2>
+          <p>
+            The project includes a simple web landing page, a mock redirect flow, an API service for recording event traffic, and a small event warehouse for investigation. Clicks, opens, installs, and conversions are captured with campaign metadata and device identifiers, allowing end-to-end validation of attribution behavior.
+          </p>
+          <p>
+            By intentionally introducing failure cases into the flow, I was able to simulate support scenarios such as missing conversions, broken deep links, campaign mismatches, duplicate events, malformed payloads, and reporting discrepancies between raw data and final dashboards.
+          </p>
+
+          <h2 class="section-heading">Core Components</h2>
+          <ul>
+            <li><strong>Mock tracking API:</strong> receives click, install, open, and conversion events.</li>
+            <li><strong>Redirect and deep link flow:</strong> simulates campaign links, fallback pages, and app-opening logic.</li>
+            <li><strong>SQLite/Postgres event store:</strong> stores raw event data for root cause analysis.</li>
+            <li><strong>SQL investigation queries:</strong> validates attribution chains and identifies broken event paths.</li>
+            <li><strong>Support runbooks:</strong> explains how each issue was reproduced and resolved.</li>
+            <li><strong>Incident documentation:</strong> provides postmortem-style writeups for recurring issues.</li>
+          </ul>
+
+          <h2 class="section-heading">Example Event Flow</h2>
+          <p>
+            A normal event path in the lab follows this sequence:
+          </p>
+
+<pre>
+1. User clicks a campaign link
+2. Redirect service stores click metadata
+3. User opens the app or fallback page
+4. Install/open event is recorded
+5. Conversion event is submitted
+6. SQL logic attributes the conversion back to the original campaign
+</pre>
+
+          <p>
+            This controlled flow makes it easy to compare expected behavior against real event output when something fails.
+          </p>
+
+          <h2 class="section-heading">Support Scenarios Simulated</h2>
+          <p>
+            I created multiple realistic support cases to reflect the types of technical problems that arise in attribution and growth platforms:
+          </p>
+          <ul>
+            <li>UTM parameters dropped during redirect.</li>
+            <li>Conversion received without a matching click.</li>
+            <li>Duplicate conversion firing due to client retry behavior.</li>
+            <li>Deep link opening fallback web content instead of target app content.</li>
+            <li>Campaign source mismatch between raw event payload and final reporting table.</li>
+            <li>Timezone mismatch causing reporting delays and confusion.</li>
+            <li>Malformed payload accepted by endpoint but excluded from attribution logic.</li>
+            <li>Cross-domain/browser behavior breaking session continuity.</li>
+          </ul>
+
+          <h2 class="section-heading">Sample Investigation: Missing Conversion Attribution</h2>
+          <p>
+            One of the most useful scenarios in the project involved a click event successfully entering the system while the downstream conversion failed to attribute to the originating campaign.
+          </p>
+          <p>
+            I approached the issue by validating the raw click event, confirming whether the install and open event carried the same identifier, and then checking whether the conversion payload preserved the expected campaign key. The investigation showed that the conversion request was missing a required field after a redirect step stripped campaign context from the session.
+          </p>
+
+<pre>
+SELECT
+  c.click_id,
+  c.campaign_name,
+  c.device_id,
+  c.click_timestamp,
+  v.conversion_timestamp,
+  v.revenue
+FROM click_events c
+LEFT JOIN conversion_events v
+  ON c.device_id = v.device_id
+WHERE v.conversion_timestamp IS NULL;
+</pre>
+
+          <p>
+            This query made it easy to identify clicks that never produced an attributed downstream conversion. From there, I compared payload structures and redirect behavior to isolate the missing handoff field.
+          </p>
+
+          <h2 class="section-heading">Sample Investigation: Duplicate Events</h2>
+          <p>
+            Another scenario involved duplicate conversion events entering the database because the client retried requests without idempotency protection. The symptom from a support perspective was inflated conversion totals in reporting and inconsistent campaign ROI.
+          </p>
+          <p>
+            After reviewing event timestamps and payload values, I created a query to detect repeated conversion submissions for the same user, event name, and campaign within a short interval.
+          </p>
+
+<pre>
+SELECT
+  device_id,
+  campaign_name,
+  event_name,
+  COUNT(*) AS duplicate_count
+FROM conversion_events
+GROUP BY device_id, campaign_name, event_name
+HAVING COUNT(*) > 1;
+</pre>
+
+          <p>
+            The root cause was not a reporting bug but a client-side retry pattern. I documented both the technical explanation and a customer-friendly explanation so that the issue could be escalated to engineering while still giving the customer a clear answer.
+          </p>
+
+          <h2 class="section-heading">How I Investigated Issues</h2>
+          <p>
+            This project intentionally mirrors the workflow I would use in a technical support engineering role:
+          </p>
+          <ul>
+            <li>Replicate the issue in a controlled environment.</li>
+            <li>Inspect browser behavior using Chrome Developer Tools.</li>
+            <li>Validate API requests, response codes, and payload structure.</li>
+            <li>Query the warehouse to compare raw inputs against expected outputs.</li>
+            <li>Separate product defects from expected behavior or integration mistakes.</li>
+            <li>Write a support summary that explains impact, cause, and next steps.</li>
+          </ul>
+
+          <h2 class="section-heading">Support Runbooks</h2>
+          <p>
+            A major focus of this project was building documentation, not just code. For each scenario, I wrote an internal runbook that included:
+          </p>
+          <ul>
+            <li>Customer symptom</li>
+            <li>Reproduction steps</li>
+            <li>Logs or payload examples</li>
+            <li>SQL checks</li>
+            <li>Likely root causes</li>
+            <li>Resolution path</li>
+            <li>Suggested customer response</li>
+          </ul>
+          <p>
+            This reflects how support engineers scale knowledge across teams and improve response quality over time.
+          </p>
+
+          <h2 class="section-heading">Customer-Facing Communication</h2>
+          <p>
+            I also included mock ticket responses to demonstrate how technical findings can be translated into clear, actionable updates for customers. In support roles, solving the issue is only part of the job; the other part is communicating the diagnosis in a way that is accurate, concise, and easy to follow.
+          </p>
+          <p>
+            The project therefore includes both technical notes for internal teams and customer-facing summaries that avoid unnecessary jargon while still setting correct expectations.
+          </p>
+
+          <h2 class="section-heading">Tools and Skills Demonstrated</h2>
+          <ul>
+            <li>SQL for data validation and event tracing</li>
+            <li>API troubleshooting and payload inspection</li>
+            <li>Browser network inspection with Chrome Developer Tools</li>
+            <li>Root cause analysis for tracking and attribution issues</li>
+            <li>Support documentation and runbook creation</li>
+            <li>Cross-functional thinking between support, product, engineering, and analytics</li>
+            <li>Clear written communication for technical and non-technical audiences</li>
+          </ul>
+
+          <h2 class="section-heading">Why This Project Matters</h2>
+          <p>
+            Attribution and event tracking issues are often difficult because the failure does not always occur where the customer first notices it. A dashboard discrepancy may actually be caused by a redirect problem, a malformed payload, a browser constraint, duplicate retries, or a downstream logic rule. This project demonstrates my ability to investigate those issues systematically rather than relying on surface-level symptoms.
+          </p>
+          <p>
+            It also reflects the kind of work performed in high-volume SaaS support environments where accuracy, clarity, and speed all matter.
+          </p>
+
+          <h2 class="section-heading">Conclusion</h2>
+          <p>
+            This support lab was built to bridge analytics, application troubleshooting, and customer-facing technical investigation. It highlights not just my ability to work with data, but my ability to diagnose end-to-end technical issues, explain root causes, and document repeatable solutions.
+          </p>
+          <p>
+            For teams supporting APIs, SDKs, deep links, and attribution pipelines, this kind of project demonstrates the practical mindset required to handle real customer issues and collaborate effectively across support, product, and engineering.
+          </p>
+
+          <h2 class="section-heading">GitHub Repository</h2>
+          <p>
+            <a href="https://github.com/johnplakon" target="_blank">View the project on GitHub</a>
+          </p>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <hr>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            <li class="list-inline-item">
+              <a href="https://www.linkedin.com/in/john-plakon-35695499/">
+                <span class="fa-stack fa-lg">
+                  <em class="fas fa-circle fa-stack-2x"></em>
+                  <em class="fab fa-linkedin fa-stack-1x fa-inverse"></em>
+                </span>
+              </a>
+            </li>
+            <li class="list-inline-item">
+              <a href="https://github.com/johnplakon">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy; John Plakon 2019</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="js/clean-blog.min.js"></script>
+
+</body>
+
+</html>
