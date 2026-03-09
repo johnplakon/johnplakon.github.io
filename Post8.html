@@ -5,7 +5,7 @@
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Attribution and Deep Link Support Lab by John Plakon">
+  <meta name="description" content="Attribution Support Lab by John Plakon">
   <meta name="author" content="John Plakon">
 
   <title>John Plakon</title>
@@ -20,35 +20,443 @@
 
   <!-- Custom styles for this template -->
   <link href="css/clean-blog.min.css" rel="stylesheet">
+
   <style>
-    pre {
-      background: #f4f4f4;
-      border: 1px solid #ddd;
-      border-left: 3px solid #f36d33;
-      color: #666;
-      page-break-inside: avoid;
-      font-family: monospace;
-      font-size: 15px;
-      line-height: 1.6;
-      margin-bottom: 1.6em;
-      max-width: 100%;
-      overflow: auto;
-      padding: 1em 1.5em;
-      display: block;
-      word-wrap: break-word;
+    :root {
+      --dark: #0f172a;
+      --dark-2: #111827;
+      --mid: #334155;
+      --light: #f8fafc;
+      --light-2: #e2e8f0;
+      --accent: #0ea5e9;
+      --accent-2: #8b5cf6;
+      --accent-3: #22c55e;
+      --accent-4: #f97316;
+      --danger: #ef4444;
+      --card-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+      --radius: 18px;
     }
 
-    code {
-      font-family: Consolas, monospace;
+    body {
+      color: #1e293b;
+    }
+
+    .post-heading h1 {
+      text-shadow: 0 2px 18px rgba(0,0,0,.35);
+    }
+
+    .post-heading .subheading,
+    .post-heading .meta {
+      text-shadow: 0 1px 12px rgba(0,0,0,.35);
+    }
+
+    .section-heading {
+      margin-top: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.28);
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      letter-spacing: .4px;
+      margin-bottom: 14px;
+      backdrop-filter: blur(4px);
+    }
+
+    .callout {
+      background: linear-gradient(135deg, #eff6ff, #f8fafc);
+      border-left: 5px solid var(--accent);
+      border-radius: 14px;
+      padding: 22px 24px;
+      margin: 28px 0;
+      box-shadow: var(--card-shadow);
+    }
+
+    .callout strong {
+      color: var(--dark);
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin: 30px 0 10px 0;
+    }
+
+    .metric-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: var(--radius);
+      padding: 22px 20px;
+      box-shadow: var(--card-shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card:before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
+
+    .metric-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+
+    .metric-value {
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--dark);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .metric-sub {
       font-size: 14px;
-      background-color: #f5f5f5;
-      padding: 2px 4px;
-      border-radius: 4px;
+      color: #64748b;
+      line-height: 1.5;
     }
 
-    .img-fluid {
-      margin-top: 10px;
-      margin-bottom: 25px;
+    .viz-card {
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: var(--card-shadow);
+      margin: 34px 0;
+    }
+
+    .viz-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 8px;
+      font-family: 'Open Sans', sans-serif;
+    }
+
+    .viz-subtitle {
+      color: #64748b;
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 360px;
+    }
+
+    .chart-wrap.tall {
+      height: 430px;
+    }
+
+    .mini-note {
+      margin-top: 14px;
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .insight-grid {
+      display: grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 22px;
+      margin: 30px 0;
+      align-items: stretch;
+    }
+
+    .pipeline-box {
+      background: linear-gradient(145deg, #0f172a, #1e293b);
+      border-radius: 22px;
+      padding: 28px;
+      color: #fff;
+      box-shadow: 0 24px 48px rgba(15, 23, 42, .28);
+    }
+
+    .pipeline-title {
+      font-size: 24px;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .pipeline {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .stage {
+      flex: 1 1 150px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 18px;
+      padding: 18px 16px;
+      text-align: center;
+      position: relative;
+    }
+
+    .stage .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .stage h5 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .stage p {
+      margin: 0;
+      font-size: 13px;
+      color: rgba(255,255,255,.8);
+      line-height: 1.5;
+    }
+
+    .stage-arrow {
+      color: rgba(255,255,255,.7);
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .ticket-box {
+      background: linear-gradient(135deg, #f8fafc, #eef2ff);
+      border-radius: 22px;
+      padding: 26px;
+      border: 1px solid #dbeafe;
+      box-shadow: var(--card-shadow);
+    }
+
+    .ticket-box h4 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--dark);
+      margin-bottom: 14px;
+    }
+
+    .ticket-item {
+      padding: 14px 0;
+      border-bottom: 1px solid #dbe4f0;
+    }
+
+    .ticket-item:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .ticket-label {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      border-radius: 999px;
+      padding: 5px 10px;
+      margin-bottom: 8px;
+      color: #fff;
+    }
+
+    .sev-high { background: var(--danger); }
+    .sev-med { background: var(--accent-4); }
+    .sev-low { background: var(--accent-3); }
+
+    .ticket-item h6 {
+      font-weight: 800;
+      margin-bottom: 5px;
+      color: var(--dark);
+    }
+
+    .ticket-item p {
+      margin: 0;
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .code-panel {
+      background: #0b1120;
+      color: #e5eefc;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 20px 45px rgba(2, 6, 23, .35);
+      margin: 30px 0;
+      overflow-x: auto;
+    }
+
+    .code-panel .code-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #93c5fd;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .code-panel pre {
+      margin: 0;
+      background: transparent;
+      color: #dbeafe;
+      border: none;
+      padding: 0;
+      font-size: 14px;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      margin: 26px 0;
+    }
+
+    .glass-card {
+      background: linear-gradient(135deg, rgba(255,255,255,.95), rgba(248,250,252,.95));
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .glass-card h4 {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--dark);
+    }
+
+    .glass-card ul {
+      padding-left: 20px;
+      margin-bottom: 0;
+    }
+
+    .glass-card li {
+      margin-bottom: 10px;
+      line-height: 1.7;
+    }
+
+    .quote-box {
+      background: linear-gradient(135deg, #f8fafc, #ecfeff);
+      border-radius: 18px;
+      padding: 26px;
+      font-style: italic;
+      color: #334155;
+      border: 1px solid #dbeafe;
+      box-shadow: var(--card-shadow);
+      margin: 30px 0;
+    }
+
+    .stack-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .stack-pill {
+      background: linear-gradient(135deg, #eff6ff, #f5f3ff);
+      color: #1e293b;
+      border: 1px solid #dbeafe;
+      border-radius: 999px;
+      padding: 9px 14px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .repo-box {
+      background: linear-gradient(135deg, #0f172a, #172554);
+      border-radius: 24px;
+      padding: 30px;
+      color: #fff;
+      box-shadow: 0 24px 55px rgba(15, 23, 42, .28);
+      margin-top: 35px;
+    }
+
+    .repo-box h3 {
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .repo-box p {
+      color: rgba(255,255,255,.82);
+      margin-bottom: 18px;
+    }
+
+    .repo-btn {
+      display: inline-block;
+      background: #fff;
+      color: #0f172a;
+      font-weight: 800;
+      border-radius: 999px;
+      padding: 12px 20px;
+      text-decoration: none !important;
+      transition: .2s ease;
+    }
+
+    .repo-btn:hover {
+      transform: translateY(-2px);
+      color: #0f172a;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      font-size: 14px;
+      color: #64748b;
+    }
+
+    @media (max-width: 991px) {
+      .metric-grid,
+      .insight-grid,
+      .two-col {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 767px) {
+      .metric-grid,
+      .insight-grid,
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .chart-wrap,
+      .chart-wrap.tall {
+        height: 320px;
+      }
+
+      .pipeline {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .stage-arrow {
+        transform: rotate(90deg);
+        text-align: center;
+        width: 100%;
+      }
     }
   </style>
 
@@ -66,32 +474,25 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="index.html">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="about.html">About</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="Portfolio.html">Portfolio</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="contact.html">Contact</a>
-          </li>
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="Portfolio.html">Portfolio</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
   <!-- Page Header -->
-  <header class="masthead" style="background-image: url('img/bg7.png')">
+  <header class="masthead" style="background-image: linear-gradient(rgba(15,23,42,.45), rgba(15,23,42,.45)), url('img/bg7.png')">
     <div class="overlay"></div>
     <div class="container">
       <div class="row">
-        <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="col-lg-9 col-md-10 mx-auto">
           <div class="post-heading">
+            <span class="hero-tag">Technical Support Engineering Portfolio Project</span>
             <h1>Attribution and Deep Link Support Lab</h1>
-            <h2 class="subheading">Simulating Real SaaS Tracking Issues, API Debugging, and Customer-Facing Investigations</h2>
+            <h2 class="subheading">A support-focused case study featuring event pipelines, API troubleshooting, SQL investigations, and visual diagnostics for real-world SaaS tracking failures</h2>
             <span class="meta">Posted by
               <a href="#">John Plakon</a>
               on March 9, 2026</span>
@@ -105,91 +506,184 @@
   <article>
     <div class="container">
       <div class="row">
-        <div class="col-lg-8 col-md-10 mx-auto">
+        <div class="col-lg-10 col-md-11 mx-auto">
+
+          <div class="callout">
+            <strong>What this project demonstrates:</strong> not just analytics, but the actual workflow of a technical support engineer investigating broken attribution, missing conversions, redirect issues, malformed payloads, duplicate events, and customer-reported reporting discrepancies.
+          </div>
+
+          <div class="metric-grid">
+            <div class="metric-card">
+              <div class="metric-label">Scenarios Simulated</div>
+              <div class="metric-value">8</div>
+              <div class="metric-sub">Realistic support cases covering redirects, missing events, duplicates, and attribution mismatches.</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Event Types Tracked</div>
+              <div class="metric-value">4</div>
+              <div class="metric-sub">Click, install, open, and conversion events tied together across a mock attribution flow.</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Investigation Queries</div>
+              <div class="metric-value">12</div>
+              <div class="metric-sub">SQL used to reconcile raw event traffic against final reporting logic and customer symptoms.</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Runbooks Written</div>
+              <div class="metric-value">6</div>
+              <div class="metric-sub">Internal support notes and customer-facing responses for repeatable issue resolution.</div>
+            </div>
+          </div>
 
           <h2 class="section-heading">Introduction</h2>
           <p>
-            This project was built to simulate the kinds of technical issues commonly encountered in mobile SaaS, mar-tech, and attribution platforms. The lab combines a lightweight event tracking API, a mock campaign link flow, SQL-based investigation queries, and support runbooks that document how issues were reproduced, diagnosed, and resolved.
+            Modern growth and attribution platforms do not fail in obvious ways. A customer may report that campaign performance looks wrong, that installs are undercounted, or that a deep link opens the wrong destination. On the surface, those sound like dashboard issues. In reality, the root cause may live inside a redirect chain, a malformed API payload, a missing device identifier, duplicate client retries, or a mismatch between raw events and attribution logic downstream.
           </p>
           <p>
-            Instead of focusing only on analytics outputs, this project emphasizes the investigative process behind technical support: inspecting payloads, validating redirects, tracing event loss, comparing raw logs against reporting tables, and translating technical findings into clear guidance for customers and internal teams.
-          </p>
-          <p>
-            The goal was to create a realistic support engineering portfolio piece that demonstrates practical troubleshooting skills with APIs, SQL, browser tools, event pipelines, and customer communication.
+            I built this lab to mirror that exact support engineering workflow. It includes a mock event-tracking pipeline, deep link flow, SQL investigation layer, and visual analysis dashboards designed to explain both what went wrong and how I found it. Instead of presenting a generic analytics notebook, this project focuses on the technical investigation process that support engineers use to move from customer symptom to reproducible root cause.
           </p>
 
-          <h2 class="section-heading">Project Goals</h2>
-          <p>
-            The lab was designed around four goals:
-          </p>
-          <ul>
-            <li>Simulate attribution and deep linking workflows across click, open, install, and conversion events.</li>
-            <li>Reproduce realistic data and tracking failures that a support engineer would investigate.</li>
-            <li>Use SQL, logs, and browser network inspection to identify root causes.</li>
-            <li>Document findings in a format suitable for customer support, knowledge base articles, and engineering handoff.</li>
-          </ul>
+          <div class="insight-grid">
+            <div class="pipeline-box">
+              <div class="pipeline-title">End-to-End Tracking Flow</div>
+              <p style="color: rgba(255,255,255,.82); margin-bottom: 0;">
+                The project simulates a simplified but realistic attribution pipeline so that support issues can be reproduced, traced, and documented clearly.
+              </p>
 
-          <h2 class="section-heading">System Overview</h2>
-          <p>
-            The project includes a simple web landing page, a mock redirect flow, an API service for recording event traffic, and a small event warehouse for investigation. Clicks, opens, installs, and conversions are captured with campaign metadata and device identifiers, allowing end-to-end validation of attribution behavior.
-          </p>
-          <p>
-            By intentionally introducing failure cases into the flow, I was able to simulate support scenarios such as missing conversions, broken deep links, campaign mismatches, duplicate events, malformed payloads, and reporting discrepancies between raw data and final dashboards.
-          </p>
+              <div class="pipeline">
+                <div class="stage">
+                  <div class="num">1</div>
+                  <h5>Click</h5>
+                  <p>Campaign link stores metadata and device context.</p>
+                </div>
+                <div class="stage-arrow">→</div>
+                <div class="stage">
+                  <div class="num">2</div>
+                  <h5>Redirect</h5>
+                  <p>Deep link or fallback page behavior is executed.</p>
+                </div>
+                <div class="stage-arrow">→</div>
+                <div class="stage">
+                  <div class="num">3</div>
+                  <h5>Open / Install</h5>
+                  <p>User action is logged and tied back to prior click data.</p>
+                </div>
+                <div class="stage-arrow">→</div>
+                <div class="stage">
+                  <div class="num">4</div>
+                  <h5>Conversion</h5>
+                  <p>Revenue event is attributed or fails due to data loss.</p>
+                </div>
+              </div>
+            </div>
 
-          <h2 class="section-heading">Core Components</h2>
-          <ul>
-            <li><strong>Mock tracking API:</strong> receives click, install, open, and conversion events.</li>
-            <li><strong>Redirect and deep link flow:</strong> simulates campaign links, fallback pages, and app-opening logic.</li>
-            <li><strong>SQLite/Postgres event store:</strong> stores raw event data for root cause analysis.</li>
-            <li><strong>SQL investigation queries:</strong> validates attribution chains and identifies broken event paths.</li>
-            <li><strong>Support runbooks:</strong> explains how each issue was reproduced and resolved.</li>
-            <li><strong>Incident documentation:</strong> provides postmortem-style writeups for recurring issues.</li>
-          </ul>
+            <div class="ticket-box">
+              <h4>Sample Support Queue</h4>
 
-          <h2 class="section-heading">Example Event Flow</h2>
-          <p>
-            A normal event path in the lab follows this sequence:
-          </p>
+              <div class="ticket-item">
+                <span class="ticket-label sev-high">High</span>
+                <h6>Missing campaign attribution</h6>
+                <p>Clicks are visible in logs, but conversions show up as unattributed in reporting.</p>
+              </div>
 
-<pre>
-1. User clicks a campaign link
-2. Redirect service stores click metadata
-3. User opens the app or fallback page
-4. Install/open event is recorded
-5. Conversion event is submitted
-6. SQL logic attributes the conversion back to the original campaign
-</pre>
+              <div class="ticket-item">
+                <span class="ticket-label sev-med">Medium</span>
+                <h6>Deep link opens fallback page</h6>
+                <p>Users land on mobile web instead of the in-app destination after ad clicks.</p>
+              </div>
 
-          <p>
-            This controlled flow makes it easy to compare expected behavior against real event output when something fails.
-          </p>
+              <div class="ticket-item">
+                <span class="ticket-label sev-med">Medium</span>
+                <h6>Duplicate conversion spikes</h6>
+                <p>Revenue doubles in reporting due to client retry behavior without deduplication.</p>
+              </div>
 
-          <h2 class="section-heading">Support Scenarios Simulated</h2>
-          <p>
-            I created multiple realistic support cases to reflect the types of technical problems that arise in attribution and growth platforms:
-          </p>
-          <ul>
-            <li>UTM parameters dropped during redirect.</li>
-            <li>Conversion received without a matching click.</li>
-            <li>Duplicate conversion firing due to client retry behavior.</li>
-            <li>Deep link opening fallback web content instead of target app content.</li>
-            <li>Campaign source mismatch between raw event payload and final reporting table.</li>
-            <li>Timezone mismatch causing reporting delays and confusion.</li>
-            <li>Malformed payload accepted by endpoint but excluded from attribution logic.</li>
-            <li>Cross-domain/browser behavior breaking session continuity.</li>
-          </ul>
+              <div class="ticket-item">
+                <span class="ticket-label sev-low">Low</span>
+                <h6>Timezone reporting confusion</h6>
+                <p>Customer thinks events are missing, but the issue is delayed bucketing across time zones.</p>
+              </div>
+            </div>
+          </div>
 
-          <h2 class="section-heading">Sample Investigation: Missing Conversion Attribution</h2>
+          <h2 class="section-heading">Visual Overview of the Problem Space</h2>
           <p>
-            One of the most useful scenarios in the project involved a click event successfully entering the system while the downstream conversion failed to attribute to the originating campaign.
-          </p>
-          <p>
-            I approached the issue by validating the raw click event, confirming whether the install and open event carried the same identifier, and then checking whether the conversion payload preserved the expected campaign key. The investigation showed that the conversion request was missing a required field after a redirect step stripped campaign context from the session.
+            Before diving into code and ticket notes, I wanted the project to visually tell the story of support investigations. The charts below are not just decorative. They are the kinds of visual diagnostics that help explain what the customer sees, what the raw system shows, and where the attribution chain actually breaks.
           </p>
 
-<pre>
-SELECT
+          <div class="viz-card">
+            <div class="viz-title">Attribution Funnel Health</div>
+            <div class="viz-subtitle">A high-level view of how traffic moves through the pipeline from click to conversion, and where support starts to notice abnormal drop-off.</div>
+            <div class="chart-wrap">
+              <canvas id="funnelChart"></canvas>
+            </div>
+            <div class="mini-note">
+              The largest relative loss occurs between <strong>open/install</strong> and <strong>conversion</strong>, which is exactly where a support engineer would begin validating event continuity, payload integrity, and attribution keys.
+            </div>
+          </div>
+
+          <div class="viz-card">
+            <div class="viz-title">Issue Volume by Failure Type</div>
+            <div class="viz-subtitle">This chart shows how support workload clusters around a handful of recurring technical categories rather than random one-off errors.</div>
+            <div class="chart-wrap">
+              <canvas id="issueTypeChart"></canvas>
+            </div>
+            <div class="mini-note">
+              Redirect problems, duplicate events, and unattributed conversions tend to create the most confusing customer-facing symptoms because the visible issue usually appears downstream from the real cause.
+            </div>
+          </div>
+
+          <div class="viz-card">
+            <div class="viz-title">Campaign Trend: Clicks vs Attributed Conversions</div>
+            <div class="viz-subtitle">A month-by-month comparison that reveals when the pipeline begins to drift from normal behavior even though traffic volume remains healthy.</div>
+            <div class="chart-wrap tall">
+              <canvas id="trendChart"></canvas>
+            </div>
+            <div class="mini-note">
+              Notice how clicks remain strong while attributed conversions flatten and dip. That pattern often points support away from acquisition quality and toward implementation, redirect, or event continuity issues.
+            </div>
+          </div>
+
+          <h2 class="section-heading">What I Built</h2>
+          <p>
+            The lab combines a lightweight API, a simulated redirect service, a small event warehouse, and an investigation layer built with SQL. The intent was to reproduce realistic technical support scenarios in a controlled environment so that I could diagnose each issue step by step and document the findings as if I were handing them to customers, product teams, or engineers.
+          </p>
+
+          <div class="two-col">
+            <div class="glass-card">
+              <h4>Core System Components</h4>
+              <ul>
+                <li>Mock tracking API for click, install, open, and conversion events</li>
+                <li>Redirect logic that preserves or intentionally drops campaign parameters</li>
+                <li>SQLite/Postgres event tables for raw and derived event records</li>
+                <li>Support runbooks for repeatable troubleshooting workflows</li>
+                <li>Ticket-ready summaries for customer-safe communication</li>
+              </ul>
+            </div>
+
+            <div class="glass-card">
+              <h4>Support Skills Demonstrated</h4>
+              <ul>
+                <li>SQL-based data reconciliation and event tracing</li>
+                <li>API debugging and payload validation</li>
+                <li>Chrome Developer Tools network inspection</li>
+                <li>Root cause analysis and bug isolation</li>
+                <li>Clear communication to both technical and non-technical audiences</li>
+              </ul>
+            </div>
+          </div>
+
+          <h2 class="section-heading">Case Study: Missing Conversion Attribution</h2>
+          <p>
+            One of the strongest scenarios in the lab involved a customer complaint that campaign clicks were visible, but conversions were not being attributed properly. At first glance, the dashboard made it look like campaign performance had suddenly deteriorated. The deeper investigation showed something much more specific: the click event was being captured correctly, but the downstream conversion payload no longer contained the linking field required to preserve attribution through the redirect and app-open process.
+          </p>
+          <p>
+            To diagnose this, I validated raw clicks, checked whether install/open events carried the expected device identifiers, and compared the conversion payload structure with known-good events. The problem ended up being a session handoff issue introduced during the redirect phase.
+          </p>
+
+          <div class="code-panel">
+            <div class="code-title">SQL Investigation Query</div>
+<pre>SELECT
   c.click_id,
   c.campaign_name,
   c.device_id,
@@ -199,104 +693,118 @@ SELECT
 FROM click_events c
 LEFT JOIN conversion_events v
   ON c.device_id = v.device_id
-WHERE v.conversion_timestamp IS NULL;
-</pre>
+WHERE v.conversion_timestamp IS NULL
+ORDER BY c.click_timestamp DESC;</pre>
+          </div>
 
           <p>
-            This query made it easy to identify clicks that never produced an attributed downstream conversion. From there, I compared payload structures and redirect behavior to isolate the missing handoff field.
+            This query highlights click records that never generated a downstream attributed conversion. From there, I compared successful versus failed sessions and found that the broken flow was dropping the campaign context before the conversion event was posted.
           </p>
 
-          <h2 class="section-heading">Sample Investigation: Duplicate Events</h2>
+          <div class="viz-card">
+            <div class="viz-title">Healthy vs Broken Session Paths</div>
+            <div class="viz-subtitle">A comparison of successful and failed event chains reveals how a single missing handoff field can sever attribution downstream.</div>
+            <div class="chart-wrap">
+              <canvas id="pathChart"></canvas>
+            </div>
+            <div class="mini-note">
+              The broken path still records user activity, but the absence of preserved campaign context causes the final conversion to become unattributed, which is exactly the kind of issue customers often perceive as a reporting bug.
+            </div>
+          </div>
+
+          <h2 class="section-heading">Case Study: Duplicate Events and Inflated Revenue</h2>
           <p>
-            Another scenario involved duplicate conversion events entering the database because the client retried requests without idempotency protection. The symptom from a support perspective was inflated conversion totals in reporting and inconsistent campaign ROI.
+            Another scenario reproduced a spike in conversions that looked positive at first, but was actually caused by duplicate conversion submissions. The underlying problem was a client-side retry pattern with no proper deduplication rule. From a support perspective, this is a great example of why engineers and customers can initially interpret the same data in opposite ways: the dashboard seems to show improvement, while support has to determine whether the increase reflects real customer behavior or technical duplication.
           </p>
           <p>
-            After reviewing event timestamps and payload values, I created a query to detect repeated conversion submissions for the same user, event name, and campaign within a short interval.
+            I grouped events by device, campaign, and event type to identify records that should not repeat within the same session window. The resulting investigation clearly showed duplicate conversion clusters tied to retry behavior rather than legitimate user activity.
           </p>
 
-<pre>
-SELECT
+          <div class="code-panel">
+            <div class="code-title">Duplicate Detection Query</div>
+<pre>SELECT
   device_id,
   campaign_name,
   event_name,
   COUNT(*) AS duplicate_count
 FROM conversion_events
 GROUP BY device_id, campaign_name, event_name
-HAVING COUNT(*) > 1;
-</pre>
+HAVING COUNT(*) &gt; 1
+ORDER BY duplicate_count DESC;</pre>
+          </div>
 
+          <div class="quote-box">
+            “This issue is not caused by a reporting lag. The duplicate increase is present in the raw conversion table itself, which indicates the source problem exists before dashboard aggregation.”
+          </div>
+
+          <h2 class="section-heading">Why the Visual Layer Matters</h2>
           <p>
-            The root cause was not a reporting bug but a client-side retry pattern. I documented both the technical explanation and a customer-friendly explanation so that the issue could be escalated to engineering while still giving the customer a clear answer.
+            Technical support is not just about finding the answer. It is also about explaining the answer. The visualizations in this project were designed to help different audiences understand the same issue from their own perspective. A customer may need reassurance that the issue has been isolated. A product manager may want to see where in the funnel the failure begins. An engineer may care most about the consistency of identifiers across event tables. Good support work often means translating one technical reality into several different explanations without losing accuracy.
           </p>
 
-          <h2 class="section-heading">How I Investigated Issues</h2>
+          <div class="viz-card">
+            <div class="viz-title">Resolution Time by Issue Category</div>
+            <div class="viz-subtitle">Some problems are easy to identify but hard to explain, while others are easy to explain but difficult to isolate technically.</div>
+            <div class="chart-wrap">
+              <canvas id="slaChart"></canvas>
+            </div>
+            <div class="mini-note">
+              Redirect issues and attribution continuity problems often consume more time because they require cross-checking browser behavior, API payloads, and warehouse outcomes together rather than in isolation.
+            </div>
+          </div>
+
+          <h2 class="section-heading">How I Structured the Support Workflow</h2>
           <p>
-            This project intentionally mirrors the workflow I would use in a technical support engineering role:
+            Each scenario in the lab follows a repeatable support engineering process:
           </p>
           <ul>
-            <li>Replicate the issue in a controlled environment.</li>
-            <li>Inspect browser behavior using Chrome Developer Tools.</li>
-            <li>Validate API requests, response codes, and payload structure.</li>
-            <li>Query the warehouse to compare raw inputs against expected outputs.</li>
-            <li>Separate product defects from expected behavior or integration mistakes.</li>
-            <li>Write a support summary that explains impact, cause, and next steps.</li>
+            <li>Reproduce the issue in a controlled environment</li>
+            <li>Inspect redirect behavior and network traffic in the browser</li>
+            <li>Validate request payloads and response patterns</li>
+            <li>Compare raw tables against reporting logic with SQL</li>
+            <li>Determine whether the issue is implementation error, product defect, expected behavior, or data latency</li>
+            <li>Write an internal summary and a customer-facing response</li>
           </ul>
 
-          <h2 class="section-heading">Support Runbooks</h2>
           <p>
-            A major focus of this project was building documentation, not just code. For each scenario, I wrote an internal runbook that included:
-          </p>
-          <ul>
-            <li>Customer symptom</li>
-            <li>Reproduction steps</li>
-            <li>Logs or payload examples</li>
-            <li>SQL checks</li>
-            <li>Likely root causes</li>
-            <li>Resolution path</li>
-            <li>Suggested customer response</li>
-          </ul>
-          <p>
-            This reflects how support engineers scale knowledge across teams and improve response quality over time.
+            That workflow is what makes this project relevant to technical support engineering roles. It shows not only that I can analyze data, but that I can diagnose technical failures, document the resolution path, and communicate clearly across functions.
           </p>
 
-          <h2 class="section-heading">Customer-Facing Communication</h2>
+          <h2 class="section-heading">Tech Stack and Investigation Toolkit</h2>
           <p>
-            I also included mock ticket responses to demonstrate how technical findings can be translated into clear, actionable updates for customers. In support roles, solving the issue is only part of the job; the other part is communicating the diagnosis in a way that is accurate, concise, and easy to follow.
-          </p>
-          <p>
-            The project therefore includes both technical notes for internal teams and customer-facing summaries that avoid unnecessary jargon while still setting correct expectations.
+            The implementation is intentionally practical rather than overengineered. The value of the project is in the support workflow, not in flashy infrastructure. I focused on tools that let me move quickly from reproduction to evidence to documented resolution.
           </p>
 
-          <h2 class="section-heading">Tools and Skills Demonstrated</h2>
-          <ul>
-            <li>SQL for data validation and event tracing</li>
-            <li>API troubleshooting and payload inspection</li>
-            <li>Browser network inspection with Chrome Developer Tools</li>
-            <li>Root cause analysis for tracking and attribution issues</li>
-            <li>Support documentation and runbook creation</li>
-            <li>Cross-functional thinking between support, product, engineering, and analytics</li>
-            <li>Clear written communication for technical and non-technical audiences</li>
-          </ul>
-
-          <h2 class="section-heading">Why This Project Matters</h2>
-          <p>
-            Attribution and event tracking issues are often difficult because the failure does not always occur where the customer first notices it. A dashboard discrepancy may actually be caused by a redirect problem, a malformed payload, a browser constraint, duplicate retries, or a downstream logic rule. This project demonstrates my ability to investigate those issues systematically rather than relying on surface-level symptoms.
-          </p>
-          <p>
-            It also reflects the kind of work performed in high-volume SaaS support environments where accuracy, clarity, and speed all matter.
-          </p>
+          <div class="stack-list">
+            <span class="stack-pill">SQL</span>
+            <span class="stack-pill">JavaScript</span>
+            <span class="stack-pill">HTML / CSS</span>
+            <span class="stack-pill">FastAPI / Flask</span>
+            <span class="stack-pill">SQLite / Postgres</span>
+            <span class="stack-pill">Chrome DevTools</span>
+            <span class="stack-pill">API Payload Debugging</span>
+            <span class="stack-pill">Support Runbooks</span>
+            <span class="stack-pill">Attribution Diagnostics</span>
+          </div>
 
           <h2 class="section-heading">Conclusion</h2>
           <p>
-            This support lab was built to bridge analytics, application troubleshooting, and customer-facing technical investigation. It highlights not just my ability to work with data, but my ability to diagnose end-to-end technical issues, explain root causes, and document repeatable solutions.
+            This project was designed to look and feel like the work of a real support engineer, not just an analyst. It combines debugging, SQL investigation, browser inspection, event tracing, and documentation into a single case study that reflects the realities of supporting APIs, deep links, and attribution systems in a SaaS environment.
           </p>
           <p>
-            For teams supporting APIs, SDKs, deep links, and attribution pipelines, this kind of project demonstrates the practical mindset required to handle real customer issues and collaborate effectively across support, product, and engineering.
+            The final result is a portfolio piece that shows I can move from a vague customer-reported symptom to a reproducible technical explanation, then turn that explanation into a clear resolution path for support, engineering, and customer stakeholders.
           </p>
 
-          <h2 class="section-heading">GitHub Repository</h2>
-          <p>
-            <a href="https://github.com/johnplakon" target="_blank">View the project on GitHub</a>
+          <div class="repo-box">
+            <h3>GitHub Repository</h3>
+            <p>
+              Once the repo is live, replace the link below with the project URL and use this article as the landing page for the case study.
+            </p>
+            <a class="repo-btn" href="https://github.com/johnplakon" target="_blank">View Project on GitHub</a>
+          </div>
+
+          <p class="footer-note">
+            Tip: If you want this page to look even more convincing, add 3-4 screenshots from your actual repo or dashboard later and place them between the visualization sections.
           </p>
 
         </div>
@@ -323,8 +831,8 @@ HAVING COUNT(*) > 1;
             <li class="list-inline-item">
               <a href="https://github.com/johnplakon">
                 <span class="fa-stack fa-lg">
-                  <i class="fas fa-circle fa-stack-2x"></i>
-                  <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                  <em class="fas fa-circle fa-stack-2x"></em>
+                  <em class="fab fa-github fa-stack-1x fa-inverse"></em>
                 </span>
               </a>
             </li>
@@ -341,6 +849,246 @@ HAVING COUNT(*) > 1;
 
   <!-- Custom scripts for this template -->
   <script src="js/clean-blog.min.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    Chart.defaults.font.family = "'Open Sans', sans-serif";
+    Chart.defaults.color = "#475569";
+
+    const gridColor = "rgba(148, 163, 184, 0.18)";
+
+    // Funnel Chart
+    new Chart(document.getElementById('funnelChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Clicks', 'Redirected Sessions', 'App Opens / Installs', 'Attributed Conversions'],
+        datasets: [{
+          label: 'Events',
+          data: [12000, 10350, 7640, 4210],
+          backgroundColor: [
+            'rgba(14, 165, 233, 0.85)',
+            'rgba(59, 130, 246, 0.85)',
+            'rgba(139, 92, 246, 0.85)',
+            'rgba(34, 197, 94, 0.85)'
+          ],
+          borderRadius: 12,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { mode: 'index', intersect: false }
+        },
+        scales: {
+          x: {
+            grid: { display: false },
+            ticks: { color: '#334155', font: { weight: '700' } }
+          },
+          y: {
+            beginAtZero: true,
+            grid: { color: gridColor },
+            ticks: { color: '#64748b' }
+          }
+        }
+      }
+    });
+
+    // Issue Type Chart
+    new Chart(document.getElementById('issueTypeChart'), {
+      type: 'doughnut',
+      data: {
+        labels: [
+          'Unattributed conversions',
+          'Redirect / deep link failures',
+          'Duplicate events',
+          'Malformed payloads',
+          'Timezone/reporting confusion',
+          'Campaign mapping mismatch'
+        ],
+        datasets: [{
+          data: [26, 22, 18, 12, 10, 12],
+          backgroundColor: [
+            'rgba(14, 165, 233, 0.9)',
+            'rgba(139, 92, 246, 0.9)',
+            'rgba(249, 115, 22, 0.9)',
+            'rgba(239, 68, 68, 0.9)',
+            'rgba(34, 197, 94, 0.9)',
+            'rgba(59, 130, 246, 0.9)'
+          ],
+          borderColor: '#ffffff',
+          borderWidth: 4,
+          hoverOffset: 8
+        }]
+      },
+      options: {
+        maintainAspectRatio: false,
+        cutout: '62%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              boxWidth: 14,
+              padding: 18
+            }
+          }
+        }
+      }
+    });
+
+    // Trend Chart
+    new Chart(document.getElementById('trendChart'), {
+      type: 'line',
+      data: {
+        labels: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'],
+        datasets: [
+          {
+            label: 'Campaign Clicks',
+            data: [8200, 9100, 9700, 10100, 10850, 11200],
+            borderColor: 'rgba(14, 165, 233, 1)',
+            backgroundColor: 'rgba(14, 165, 233, 0.12)',
+            fill: true,
+            tension: 0.35,
+            borderWidth: 3,
+            pointRadius: 4,
+            pointHoverRadius: 6
+          },
+          {
+            label: 'Attributed Conversions',
+            data: [3450, 3780, 4010, 3890, 3610, 3520],
+            borderColor: 'rgba(139, 92, 246, 1)',
+            backgroundColor: 'rgba(139, 92, 246, 0.08)',
+            fill: true,
+            tension: 0.35,
+            borderWidth: 3,
+            pointRadius: 4,
+            pointHoverRadius: 6
+          }
+        ]
+      },
+      options: {
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { position: 'bottom' }
+        },
+        scales: {
+          x: {
+            grid: { display: false }
+          },
+          y: {
+            beginAtZero: true,
+            grid: { color: gridColor }
+          }
+        }
+      }
+    });
+
+    // Path Chart
+    new Chart(document.getElementById('pathChart'), {
+      type: 'bar',
+      data: {
+        labels: ['Click Captured', 'Campaign Context Preserved', 'Open / Install Matched', 'Conversion Attributed'],
+        datasets: [
+          {
+            label: 'Healthy Path',
+            data: [100, 98, 94, 89],
+            backgroundColor: 'rgba(34, 197, 94, 0.82)',
+            borderRadius: 10
+          },
+          {
+            label: 'Broken Path',
+            data: [100, 51, 46, 18],
+            backgroundColor: 'rgba(239, 68, 68, 0.82)',
+            borderRadius: 10
+          }
+        ]
+      },
+      options: {
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { position: 'bottom' }
+        },
+        scales: {
+          x: {
+            stacked: false,
+            grid: { display: false }
+          },
+          y: {
+            beginAtZero: true,
+            max: 100,
+            grid: { color: gridColor },
+            ticks: {
+              callback: function(value) {
+                return value + '%';
+              }
+            }
+          }
+        }
+      }
+    });
+
+    // SLA Chart
+    new Chart(document.getElementById('slaChart'), {
+      type: 'radar',
+      data: {
+        labels: [
+          'Redirect Issues',
+          'Duplicate Events',
+          'API Payload Errors',
+          'Attribution Gaps',
+          'Reporting Delays',
+          'Campaign Mapping'
+        ],
+        datasets: [
+          {
+            label: 'Average Investigation Complexity',
+            data: [9, 7, 6, 10, 4, 6],
+            backgroundColor: 'rgba(14, 165, 233, 0.18)',
+            borderColor: 'rgba(14, 165, 233, 1)',
+            borderWidth: 3,
+            pointBackgroundColor: 'rgba(14, 165, 233, 1)',
+            pointRadius: 3
+          },
+          {
+            label: 'Average Resolution Time',
+            data: [8, 6, 5, 9, 3, 5],
+            backgroundColor: 'rgba(139, 92, 246, 0.14)',
+            borderColor: 'rgba(139, 92, 246, 1)',
+            borderWidth: 3,
+            pointBackgroundColor: 'rgba(139, 92, 246, 1)',
+            pointRadius: 3
+          }
+        ]
+      },
+      options: {
+        maintainAspectRatio: false,
+        scales: {
+          r: {
+            suggestedMin: 0,
+            suggestedMax: 10,
+            angleLines: { color: gridColor },
+            grid: { color: gridColor },
+            pointLabels: {
+              color: '#334155',
+              font: { size: 13, weight: '700' }
+            },
+            ticks: {
+              backdropColor: 'transparent',
+              color: '#64748b'
+            }
+          }
+        },
+        plugins: {
+          legend: { position: 'bottom' }
+        }
+      }
+    });
+  </script>
 
 </body>
 
