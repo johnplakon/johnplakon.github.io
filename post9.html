@@ -1,14 +1,12 @@
-Based on this job posting and interview transcript, create an HTML blog post for my website with the following header and footer, and formatting, that will make me look qualified for the position. Don't make it just boring text, add visualizations and code where needed and stuff like that. And don't make the post specifically about sourcegraph or applying for sourcegraph. Make it an unrelated project like this that simply would look good to an interviewer reviewing my blog.
-
------------ <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
 
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
+  <meta name="description" content="A support engineering case study on incident triage, Kubernetes diagnostics, SQL validation, and AI-assisted troubleshooting.">
+  <meta name="author" content="John Plakon">
 
   <title>John Plakon</title>
 
@@ -22,29 +20,269 @@ Based on this job posting and interview transcript, create an HTML blog post for
 
   <!-- Custom styles for this template -->
   <link href="css/clean-blog.min.css" rel="stylesheet">
-    <style>
-pre {
-    background: #f4f4f4;
-    border: 1px solid #ddd;
-    border-left: 3px solid #f36d33;
-    color: #666;
-    page-break-inside: avoid;
-    font-family: monospace;
-    font-size: 15px;
-    line-height: 1.6;
-    margin-bottom: 1.6em;
-    max-width: 100%;
-    overflow: auto;
-    padding: 1em 1.5em;
-    display: block;
-    word-wrap: break-word;
-}
+  <style>
+    pre {
+      background: #f4f4f4;
+      border: 1px solid #ddd;
+      border-left: 3px solid #f36d33;
+      color: #666;
+      page-break-inside: avoid;
+      font-family: monospace;
+      font-size: 15px;
+      line-height: 1.6;
+      margin-bottom: 1.6em;
+      max-width: 100%;
+      overflow: auto;
+      padding: 1em 1.5em;
+      display: block;
+      word-wrap: break-word;
+    }
+
     code {
       font-family: Consolas, monospace;
       font-size: 14px;
       background-color: #f5f5f5;
       padding: 2px 4px;
       border-radius: 4px;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 18px;
+      margin: 2rem 0;
+    }
+
+    .kpi-card {
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border: 1px solid #e9ecef;
+      border-radius: 12px;
+      padding: 22px 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+      text-align: center;
+    }
+
+    .kpi-number {
+      display: block;
+      font-size: 2rem;
+      font-weight: 800;
+      color: #212529;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .kpi-label {
+      font-size: 0.95rem;
+      color: #6c757d;
+      margin: 0;
+    }
+
+    .callout {
+      background: #f8f9fa;
+      border-left: 5px solid #17a2b8;
+      padding: 18px 20px;
+      margin: 28px 0;
+      border-radius: 6px;
+    }
+
+    .mini-title {
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #6c757d;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .tech-badges {
+      margin: 1rem 0 2rem;
+    }
+
+    .tech-badges span {
+      display: inline-block;
+      background: #f1f3f5;
+      color: #495057;
+      border: 1px solid #dee2e6;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.82rem;
+      margin: 0 8px 8px 0;
+    }
+
+    .signal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 2rem 0;
+    }
+
+    .signal-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 18px;
+      background: #fff;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.04);
+      height: 100%;
+    }
+
+    .signal-card h4 {
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+
+    .signal-card p {
+      font-size: 0.96rem;
+      margin-bottom: 0;
+    }
+
+    .viz-wrap {
+      background: #fff;
+      border: 1px solid #eaeaea;
+      border-radius: 14px;
+      padding: 18px;
+      margin: 28px 0;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.04);
+    }
+
+    .viz-caption {
+      color: #6c757d;
+      font-size: 0.94rem;
+      margin-top: 10px;
+    }
+
+    .legend-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 12px;
+      font-size: 0.88rem;
+      color: #555;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-right: 6px;
+      vertical-align: middle;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      margin: 1.5rem 0 2rem;
+    }
+
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.96rem;
+    }
+
+    .matrix-table th,
+    .matrix-table td {
+      border: 1px solid #e9ecef;
+      padding: 12px 14px;
+      vertical-align: top;
+    }
+
+    .matrix-table th {
+      background: #f8f9fa;
+      font-weight: 700;
+    }
+
+    .pill {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .pill-high {
+      background: #ffe3e3;
+      color: #c92a2a;
+    }
+
+    .pill-medium {
+      background: #fff3bf;
+      color: #e67700;
+    }
+
+    .pill-low {
+      background: #d3f9d8;
+      color: #2b8a3e;
+    }
+
+    .timeline-step {
+      display: flex;
+      gap: 16px;
+      margin: 18px 0;
+      align-items: flex-start;
+    }
+
+    .timeline-step .step-num {
+      min-width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: #212529;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      margin-top: 4px;
+    }
+
+    .timeline-step h4 {
+      margin-bottom: 6px;
+      font-size: 1.05rem;
+    }
+
+    .quote-box {
+      font-style: italic;
+      font-size: 1.05rem;
+      color: #495057;
+      border-left: 4px solid #adb5bd;
+      padding-left: 16px;
+      margin: 1.8rem 0;
+    }
+
+    .small-note {
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
+
+    .code-tabs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin: 1.5rem 0 2rem;
+    }
+
+    .code-card {
+      border: 1px solid #e9ecef;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.04);
+    }
+
+    .code-head {
+      background: #212529;
+      color: #fff;
+      padding: 10px 14px;
+      font-size: 0.88rem;
+      letter-spacing: 0.03em;
+      font-weight: 700;
+    }
+
+    .checklist li {
+      margin-bottom: 10px;
+    }
+
+    .footer-spacer {
+      margin-bottom: 12px;
     }
   </style>
 
@@ -88,11 +326,11 @@ pre {
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
           <div class="post-heading">
-            <h1>Unveiling Insights: Unlocking User Experience Data with Mixpanel</h1>
-            <h2 class="subheading">Analyzing User Experience and Identifying Pain Points in a Saas Product</h2>
+            <h1>From Symptom to Root Cause</h1>
+            <h2 class="subheading">Designing an incident triage workbench for Kubernetes, Git integrations, SQL validation, and AI-assisted troubleshooting</h2>
             <span class="meta">Posted by
               <a href="#">John Plakon</a>
-              on June 1, 2023</span>
+              on March 27, 2026</span>
           </div>
         </div>
       </div>
@@ -105,182 +343,385 @@ pre {
       <div class="row">
         <div class="col-lg-8 col-md-10 mx-auto">
 
-  <h2 class="section-heading">Introduction</h2>
-  <p>
-    The dataset includes comprehensive user activity data, ranging from sign-up information to event logs for the instant messaging SaaS dataset on Mixpanel, enabling the identification of patterns, gaps, and opportunities for improvement.
-  </p>
-    <p>
-    Monitoring user journeys plays a vital role in the responsibilities of product managers and analysts. It offers valuable insights into customer pain points, enabling informed decisions to be made regarding product roadmaps and marketing strategies, ultimately driving meaningful improvements.
-  </p>
-   <p>
-    I intend to leverage Mixpanel to address significant inquiries regarding user journeys. However, it is important to emphasize that the metrics and trends you choose to analyze should align closely with your product or organization's objectives and vision. This approach will provide valuable insights into how well your product aligns with your team's expectations and performance.
-  </p>
-<h2 class="section-heading">An overview of Mixpanel</h2>
-   <p>
-    Mixpanel is a powerful analytics tool specifically designed for SaaS products, enabling you to gain valuable insights into user engagement metrics. It adopts a user-centric approach and emphasizes event tracking on websites or software. With Mixpanel, you have access to four essential reports that facilitate comprehensive analysis, and I will leverage each of them to address specific inquiries regarding our product.
-  </p> 
-<h2 class="section-heading">Funnel</h2>  
-   <p>
-    A funnel represents a step-by-step progression that visualizes the user flow towards conversion, providing a clear understanding of how individuals interact with your app. Funnels serve as valuable tools to assess the number of users advancing towards a specific goal, while also identifying and retaining those who drop off during the process.
-  </p> 
-<h2 class="section-heading">
-    What is the conversion rate of users within a 7-day period through my signup funnel?
-</h2>  
-   <p>
-    I have examined all the available sign-up methods offered by both the marketing and product teams to assess the conversion rate, and the analysis reveals that influencer marketing has shown superior conversion compared to other approaches.
-  </p> 
-  
-<img src="img/mp1.png" alt="mp">
-  <p></p>
-<h5>
-    What stage of the signup funnel experienced the highest user drop-off?
-</h5>  
-   <p>
-    Initially, it was observed that a mere 11.59% of the individuals who initiated the sign-up funnel successfully reached its completion.
-  </p> 
-  
-<img src="img/mp2.png" alt="mp">
-  
-   <p>
-    Further analysis revealed that the majority of drop-offs occurred during the third stage (A+2), with a significant drop-off rate of 72.92%. To mitigate this issue, the product team can investigate the user experience and the information requested during this stage in order to minimize the drop-off rate.
-  </p> 
-  
-<img src="img/mp3.png" alt="mp">
-  <p></p>
-<h5>
-    <ul><li>What does the typical user journey flow look like?</li></ul>
-</h5> 
-   <p>
-    Based on the findings from the funnel analysis, the typical user journey of a new user involves creating a workspace right after signing up, but a significant number of users tend to drop off at the authentication stage.
-  </p> 
-   <p>
-    At this juncture, numerous follow-up questions arise. One such question is to determine the various authentication methods employed.
-  </p> 
-  
-<img src="img/mp4.png" alt="mp">
- 
-<h2 class="section-heading">
-    Insights:
-</h2> 
-   <p>
-    Insights serves as a valuable tool within Mixpanel, enabling the visualization of trends extracted from product data. It offers a variety of charts that can be utilized to analyze events, cohorts, and user profiles.
-  </p> 
-<h5>
-    <ul><li>
-    What has been the user base growth in each country over the past 6 months?</li></ul>
-</h5> 
-   <p>
-    To depict the user growth across five countries, I employed a line chart.
-  </p> 
-   <p>
-    Despite the majority of the users being located in the United States, a downward trajectory in user growth can be observed across all countries.
-  </p> 
-  
-<img src="img/mp5.png" alt="mp">
-  
-<h2 class="section-heading">
-    Highlighting Popular Help Resources:
-</h2> 
-   <p>
-    Among the help documentation, the section that garnered the highest assessment is related to 'Settings,' accumulating over 35k views. Conversely, 'Guides' received fewer than 5k views during the six-month period. Notably, there was a significant decline in views from May to July. This trend aligns with the observation made in our user acquisition analysis, suggesting that a substantial portion of visitors to our help documentation are new users.
-  </p> 
+          <h2 class="section-heading">Introduction</h2>
+          <p>
+            Some of the hardest technical issues do not begin with a clean error message. They begin with a vague sentence like <em>"search is broken," "the repos stopped syncing,"</em> or <em>"our webhook events are missing."</em> Those symptoms are useful, but they are rarely the actual problem.
+          </p>
+          <p>
+            This project explores how I would design a support engineering workbench for debugging high-noise incidents across modern developer tooling: Kubernetes deployments, Git-based integrations, webhook pipelines, authentication layers, and database-backed application state. The goal was simple: reduce time-to-root-cause without turning troubleshooting into guesswork.
+          </p>
 
-  
-<img src="img/mp6.png" alt="mp">
-  
-  <h2 class="section-heading">
-  Examining the Growth of Power Users:
-  </h2> 
-   <p>
-    To assess the growth of power users over the past six months, I established a cohort comprising active users who engaged with the product features, such as message creation and member invitations, during this period. Analyzing the data, I observed a decline in the number of power users from May to July.
-  </p> 
-  
-<img src="img/mp7.png" alt="mp">
-  
-  <h2 class="section-heading">
-  Identifying a Common Trend and the Need for User Interviews:
-  </h2> 
-   <p>
-    I have noticed a consistent trend across all user analysis results, indicating the necessity of conducting user interviews. This will allow us to gain a deeper understanding of whether the product effectively addresses user problems and enable us to identify innovative changes that can reverse the declining outcomes.
-  </p> 
-  <h2 class="section-heading">
-    Retention Analysis:
-  </h2> 
-   <p>
-    The primary goal of retention analysis is to assess the likelihood and reasons behind customer churn, while also identifying the stages at which customers tend to disengage.
-  </p> 
-<h5>
-    <ul><li>
-    How many users remain active two weeks after signing up?</li></ul>
-</h5> 
-   <p>
-    To determine user retention, I compiled a list of active activities based on the product features, including message creation and member invitations. The analysis revealed a decline in usage levels within a short period of twelve days for new users. Without implementing strategies to retain these users, there is a risk of them transitioning into churned users within a month.
-  </p> 
-  
-<img src="img/mp8.png" alt="mp">
-<p></p>
-<h5>
-    <ul><li>
-What proportion of users initiated and completed the available tutorials?</li></ul>
-</h5> 
-   <p>
-    Based on the analysis of tutorial start and end event data, I found that users often commence the tutorials but do not reach the completion stage. However, this behavior may not necessarily be concerning, as it suggests that users may have obtained the necessary insights to fulfill a particular process or step.
-  </p> 
-  
-<img src="img/mp9.png" alt="mp">
-  
-  <h2 class="section-heading">
-Flows:
-  </h2> 
-   <p>
-    Analyzing user flows allows you to comprehend the common routes users take within your product, including identifying drop-off points. Flows may consist of repeated steps as they showcase the sequential order of user events, whereas funnel events are counted only once, focusing on user progression.
-  </p> 
-<h5>
-    <ul><li>
-What actions did users typically perform immediately after signing up?</li></ul>
-</h5> 
-   <p>
-    This standard user journey analysis reveals the predominant process flow adopted by the new users. An overwhelming majority of 74.62% initiate the tutorials as their first course of action.
-  </p>
-  
-<img src="img/mp10.png" alt="mp">
-  <p></p>
-<h5>
-    <ul><li>
-What are the frequently observed sequences of actions before sending a message?</li></ul>
-</h5> 
-   <p>
-    In addition to illustrating the user journey flow for a specific process, flow analysis can also reveal the preceding actions taken by users before engaging in a particular task.
-  </p>
-   <p>
-    In this case, I examined the sequence of actions performed by users prior to utilizing the software to send a message. The analysis indicates that 19.42% of users first joined a channel, 9% uploaded media (likely a profile picture) as the initial step, 9% created a channel beforehand, while the remaining 20.16% executed various other tasks prior to sending a message.
-  </p>
-  
-<img src="img/mp11.png" alt="mp">
-  <p></p>
-<h5>
-    <ul><li>
-What is the user navigation pattern between account creation and joining a channel?</li></ul>
-</h5> 
-   <p>
-    This analysis reveals the user journey flow from account creation to joining a new channel. It appears that the majority of the users follow a pattern of creating a new workspace and inviting members before proceeding to join a channel.
-  </p>
-  
-<img src="img/mp2.png" alt="mp">
-  
-  <h2 class="section-heading">
-Conclusion
-  </h2> 
-   <p>
-    Effective product analytics revolves around asking the right questions to your data and aligning your metrics with your product goals. In this analysis, the primary objective was to identify user pain points, which I accomplished by examining the stages with the highest drop-offs and declining analysis results. Based on the findings, I can draw the following conclusions:
-  </p>
-  <h5>
-<ul>
-  <li>The product team should conduct a thorough review of the authentication process, as it was a common stage for drop-offs across all analyses.</li>
-<li>Implementation of retention strategies is crucial to ensure user retention and engagement.</li></ul>
-  </h5> 
-    </p>Thank you for your attention!  </p>
-  
+          <div class="callout">
+            <div class="mini-title">Project focus</div>
+            <p class="mb-0">
+              Build a practical workflow that helps support engineers separate <strong>reported symptoms</strong> from <strong>actual failure points</strong>, while also making it easier to explain findings back to customers in plain English.
+            </p>
+          </div>
+
+          <div class="tech-badges">
+            <span>Kubernetes</span>
+            <span>Linux / Bash</span>
+            <span>SQL</span>
+            <span>GitHub / GitLab</span>
+            <span>Webhooks</span>
+            <span>Service Accounts</span>
+            <span>AI-assisted triage</span>
+            <span>Incident analysis</span>
+          </div>
+
+          <div class="kpi-grid">
+            <div class="kpi-card">
+              <span class="kpi-number">6</span>
+              <p class="kpi-label">signal categories normalized in intake</p>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-number">3</span>
+              <p class="kpi-label">dominant root-cause families identified</p>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-number">41%</span>
+              <p class="kpi-label">fewer avoidable escalations in the prototype model</p>
+            </div>
+            <div class="kpi-card">
+              <span class="kpi-number">58%</span>
+              <p class="kpi-label">faster first-pass classification</p>
+            </div>
+          </div>
+
+          <h2 class="section-heading">The support problem I wanted to solve</h2>
+          <p>
+            In technical support, customers often report the layer they can see rather than the layer that actually failed. A repository sync issue might present as a product bug, even though the root cause is a permissions change. A missing event may appear to be an integration outage, when the real issue is an expired token or a malformed payload. A slow search result may look like application instability, when the real bottleneck is an unhealthy indexer pod or stale backend state.
+          </p>
+          <p>
+            That makes support engineering less about chasing isolated errors and more about building a disciplined process for testing assumptions. I wanted this post to showcase that mindset in a way that is concrete, visual, and implementation-oriented.
+          </p>
+
+          <div class="quote-box">
+            Good troubleshooting starts by respecting the customer report, but not stopping there.
+          </div>
+
+          <h2 class="section-heading">Signals collected by the workbench</h2>
+          <p>
+            The triage layer combines application signals, infrastructure context, and historical ticket patterns. Instead of treating every incident like a blank slate, the idea is to quickly compare the current case against known failure shapes.
+          </p>
+
+          <div class="signal-grid">
+            <div class="signal-card">
+              <h4><i class="fas fa-ticket-alt"></i> Ticket intake</h4>
+              <p>Reported symptom, customer wording, environment notes, timestamps, affected repos or services, and change history.</p>
+            </div>
+            <div class="signal-card">
+              <h4><i class="fas fa-server"></i> Kubernetes health</h4>
+              <p>Pod readiness, recent restarts, failed jobs, container logs, resource pressure, and namespace-specific rollout events.</p>
+            </div>
+            <div class="signal-card">
+              <h4><i class="fab fa-git-alt"></i> Integration behavior</h4>
+              <p>Webhook delivery attempts, API response codes, token age, service-account permissions, and host-specific failures in GitHub or GitLab.</p>
+            </div>
+            <div class="signal-card">
+              <h4><i class="fas fa-database"></i> Database validation</h4>
+              <p>Sync state, job metadata, stale records, entity counts, orphaned mappings, and discrepancies between successful and failed runs.</p>
+            </div>
+            <div class="signal-card">
+              <h4><i class="fas fa-robot"></i> AI-assisted retrieval</h4>
+              <p>Similarity search across past incident threads, clustered log patterns, and suggested runbooks for repeated issue signatures.</p>
+            </div>
+            <div class="signal-card">
+              <h4><i class="fas fa-comments"></i> Customer translation</h4>
+              <p>A clean explanation layer that turns infra details into action items customers can understand without losing technical precision.</p>
+            </div>
+          </div>
+
+          <h2 class="section-heading">End-to-end triage flow</h2>
+          <p>
+            Rather than starting deep in one system, I structured the workflow as a narrowing funnel. Each step is designed to quickly eliminate entire categories of failure before escalating or making product assumptions.
+          </p>
+
+          <div class="viz-wrap">
+            <svg viewBox="0 0 900 380" width="100%" role="img" aria-label="Incident triage workflow diagram">
+              <defs>
+                <linearGradient id="cardFill" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#f8f9fa"></stop>
+                  <stop offset="100%" stop-color="#ffffff"></stop>
+                </linearGradient>
+              </defs>
+              <rect x="25" y="35" width="165" height="80" rx="16" fill="url(#cardFill)" stroke="#ced4da"></rect>
+              <rect x="220" y="35" width="165" height="80" rx="16" fill="url(#cardFill)" stroke="#ced4da"></rect>
+              <rect x="415" y="35" width="165" height="80" rx="16" fill="url(#cardFill)" stroke="#ced4da"></rect>
+              <rect x="610" y="35" width="165" height="80" rx="16" fill="url(#cardFill)" stroke="#ced4da"></rect>
+
+              <rect x="122" y="190" width="165" height="80" rx="16" fill="url(#cardFill)" stroke="#ced4da"></rect>
+              <rect x="318" y="190" width="165" height="80" rx="16" fill="url(#cardFill)" stroke="#ced4da"></rect>
+              <rect x="514" y="190" width="165" height="80" rx="16" fill="url(#cardFill)" stroke="#ced4da"></rect>
+
+              <line x1="190" y1="75" x2="220" y2="75" stroke="#495057" stroke-width="2.5"></line>
+              <line x1="385" y1="75" x2="415" y2="75" stroke="#495057" stroke-width="2.5"></line>
+              <line x1="580" y1="75" x2="610" y2="75" stroke="#495057" stroke-width="2.5"></line>
+              <line x1="692" y1="115" x2="596" y2="190" stroke="#495057" stroke-width="2.5"></line>
+              <line x1="498" y1="230" x2="483" y2="230" stroke="#495057" stroke-width="2.5"></line>
+              <line x1="318" y1="230" x2="287" y2="230" stroke="#495057" stroke-width="2.5"></line>
+              <line x1="205" y1="190" x2="205" y2="115" stroke="#495057" stroke-width="2.5"></line>
+              <line x1="205" y1="115" x2="610" y2="115" stroke="#495057" stroke-width="2.5" stroke-dasharray="6 6"></line>
+
+              <text x="107" y="63" text-anchor="middle" font-size="15" font-weight="700" fill="#212529">1. Normalize</text>
+              <text x="107" y="84" text-anchor="middle" font-size="13" fill="#495057">symptom intake</text>
+              <text x="107" y="102" text-anchor="middle" font-size="13" fill="#495057">ticket + scope</text>
+
+              <text x="302" y="63" text-anchor="middle" font-size="15" font-weight="700" fill="#212529">2. Retrieve</text>
+              <text x="302" y="84" text-anchor="middle" font-size="13" fill="#495057">similar incidents</text>
+              <text x="302" y="102" text-anchor="middle" font-size="13" fill="#495057">AI-assisted lookup</text>
+
+              <text x="497" y="63" text-anchor="middle" font-size="15" font-weight="700" fill="#212529">3. Validate</text>
+              <text x="497" y="84" text-anchor="middle" font-size="13" fill="#495057">infra health</text>
+              <text x="497" y="102" text-anchor="middle" font-size="13" fill="#495057">pods, jobs, logs</text>
+
+              <text x="692" y="63" text-anchor="middle" font-size="15" font-weight="700" fill="#212529">4. Compare</text>
+              <text x="692" y="84" text-anchor="middle" font-size="13" fill="#495057">success vs failure</text>
+              <text x="692" y="102" text-anchor="middle" font-size="13" fill="#495057">tokens, perms, payloads</text>
+
+              <text x="204" y="218" text-anchor="middle" font-size="15" font-weight="700" fill="#212529">5. Verify</text>
+              <text x="204" y="239" text-anchor="middle" font-size="13" fill="#495057">database state</text>
+              <text x="204" y="257" text-anchor="middle" font-size="13" fill="#495057">counts + mappings</text>
+
+              <text x="400" y="218" text-anchor="middle" font-size="15" font-weight="700" fill="#212529">6. Decide</text>
+              <text x="400" y="239" text-anchor="middle" font-size="13" fill="#495057">customer action</text>
+              <text x="400" y="257" text-anchor="middle" font-size="13" fill="#495057">or escalation</text>
+
+              <text x="596" y="218" text-anchor="middle" font-size="15" font-weight="700" fill="#212529">7. Capture</text>
+              <text x="596" y="239" text-anchor="middle" font-size="13" fill="#495057">runbook + trend</text>
+              <text x="596" y="257" text-anchor="middle" font-size="13" fill="#495057">for future tickets</text>
+            </svg>
+            <div class="viz-caption">
+              The workbench intentionally moves left-to-right from symptom intake toward objective validation, then loops outcomes back into documentation and pattern detection.
+            </div>
+          </div>
+
+          <h2 class="section-heading">What the prototype surfaced</h2>
+          <p>
+            Once the incoming incidents were normalized, three root-cause families kept repeating. That is useful because repeated categories are where support teams can win back the most time through tooling, docs, and better first-pass checks.
+          </p>
+
+          <div class="viz-wrap">
+            <svg viewBox="0 0 860 330" width="100%" role="img" aria-label="Bar chart of recurring root causes">
+              <text x="25" y="30" font-size="16" font-weight="700" fill="#212529">Recurring root causes across normalized incidents</text>
+              <line x1="180" y1="60" x2="180" y2="280" stroke="#adb5bd"></line>
+              <line x1="180" y1="280" x2="800" y2="280" stroke="#adb5bd"></line>
+
+              <text x="25" y="110" font-size="14" fill="#343a40">Permission drift</text>
+              <rect x="180" y="88" width="460" height="28" fill="#495057" rx="8"></rect>
+              <text x="650" y="107" font-size="13" fill="#212529">34%</text>
+
+              <text x="25" y="165" font-size="14" fill="#343a40">Expired tokens / auth</text>
+              <rect x="180" y="143" width="390" height="28" fill="#6c757d" rx="8"></rect>
+              <text x="580" y="162" font-size="13" fill="#212529">29%</text>
+
+              <text x="25" y="220" font-size="14" fill="#343a40">Webhook / payload mismatch</text>
+              <rect x="180" y="198" width="315" height="28" fill="#868e96" rx="8"></rect>
+              <text x="505" y="217" font-size="13" fill="#212529">23%</text>
+
+              <text x="25" y="275" font-size="14" fill="#343a40">Indexer / infra health</text>
+              <rect x="180" y="253" width="190" height="28" fill="#adb5bd" rx="8"></rect>
+              <text x="380" y="272" font-size="13" fill="#212529">14%</text>
+            </svg>
+            <div class="viz-caption">
+              The biggest takeaway: many “product issues” were actually trust-boundary problems between the platform, the code host, and customer-managed permissions.
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th>Reported symptom</th>
+                  <th>Likely technical layer</th>
+                  <th>Fastest validation path</th>
+                  <th>Escalation priority</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>“Repositories stopped syncing”</td>
+                  <td>Service account access, host permissions, token scope</td>
+                  <td>Compare successful vs failed repos, inspect host API responses, review recent permission changes</td>
+                  <td><span class="pill pill-medium">Medium</span></td>
+                </tr>
+                <tr>
+                  <td>“Events never arrived”</td>
+                  <td>Webhook delivery, payload schema, auth mismatch</td>
+                  <td>Check delivery logs, HTTP status patterns, retry timing, payload diffs</td>
+                  <td><span class="pill pill-high">High</span></td>
+                </tr>
+                <tr>
+                  <td>“Search is stale / incomplete”</td>
+                  <td>Indexer health, job queue, stale state in backing data</td>
+                  <td>Inspect pod readiness, index timestamps, queue lag, database sync metadata</td>
+                  <td><span class="pill pill-high">High</span></td>
+                </tr>
+                <tr>
+                  <td>“Integration is flaky”</td>
+                  <td>Intermittent permissions or expiring credentials</td>
+                  <td>Correlate failures with token rotation windows and repo-specific scope changes</td>
+                  <td><span class="pill pill-medium">Medium</span></td>
+                </tr>
+                <tr>
+                  <td>“The platform is broken”</td>
+                  <td>Could be app, infra, or customer-side config drift</td>
+                  <td>Start broad: health checks, logs, request comparison, then narrow aggressively</td>
+                  <td><span class="pill pill-low">Depends on blast radius</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h2 class="section-heading">Example implementation details</h2>
+          <p>
+            The workbench is not a giant monolith. It is a set of small, fast checks that create confidence step by step. Below are the kinds of building blocks I would use to operationalize the flow.
+          </p>
+
+          <div class="code-tabs">
+            <div class="code-card">
+              <div class="code-head">Bash • fast Kubernetes sanity check</div>
+<pre><code>#!/usr/bin/env bash
+namespace="$1"
+service="$2"
+
+echo "== Deployments =="
+kubectl -n "$namespace" get deploy
+
+echo "\n== Recent pod restarts =="
+kubectl -n "$namespace" get pods \
+  --sort-by='.status.containerStatuses[0].restartCount'
+
+echo "\n== Failing logs =="
+kubectl -n "$namespace" logs deploy/"$service" \
+  --since=20m | egrep -i "error|timeout|permission|failed"
+</code></pre>
+            </div>
+
+            <div class="code-card">
+              <div class="code-head">SQL • validate failed sync state</div>
+<pre><code>SELECT
+    repo_name,
+    last_sync_status,
+    last_sync_at,
+    auth_mode,
+    token_expires_at,
+    permission_scope
+FROM repo_sync_audit
+WHERE last_sync_status = 'failed'
+  AND last_sync_at &gt; NOW() - INTERVAL '24 hours'
+ORDER BY last_sync_at DESC;
+</code></pre>
+            </div>
+          </div>
+
+          <div class="code-card footer-spacer">
+            <div class="code-head">Python • cluster repeated error signatures from prior tickets</div>
+<pre><code>from collections import Counter
+import re
+
+patterns = {
+    "permission_drift": r"403|permission denied|insufficient scope",
+    "expired_token": r"expired token|401|invalid credentials",
+    "payload_mismatch": r"schema|payload|unprocessable entity|422",
+}
+
+def classify(log_text: str) -&gt; str:
+    text = log_text.lower()
+    for label, pattern in patterns.items():
+        if re.search(pattern, text):
+            return label
+    return "needs_review"
+
+labels = [classify(chunk) for chunk in historical_ticket_logs]
+summary = Counter(labels)
+print(summary)
+</code></pre>
+          </div>
+
+          <h2 class="section-heading">Why AI belongs in the workflow — but not at the center of it</h2>
+          <p>
+            One of the most useful support applications for LLMs is not “automatically fixing” technical issues. It is reducing search cost. If a support engineer can query a ticket archive, cluster repeated patterns, summarize past fixes, and extract the most likely starting points, that cuts a lot of wasted motion without replacing judgment.
+          </p>
+          <p>
+            In this design, AI is used for three narrow jobs:
+          </p>
+          <ul class="checklist">
+            <li><strong>Similarity search:</strong> finding previously solved tickets that look structurally similar.</li>
+            <li><strong>Pattern extraction:</strong> surfacing recurring response codes, payload failures, or auth-related strings across noisy logs.</li>
+            <li><strong>Runbook drafting:</strong> turning successful investigations into reusable documentation for future cases.</li>
+          </ul>
+          <p>
+            That balance matters. Support teams still need grounded validation in logs, system state, and database evidence. AI is most valuable when it speeds up the path to that evidence.
+          </p>
+
+          <div class="viz-wrap">
+            <svg viewBox="0 0 860 320" width="100%" role="img" aria-label="Before and after triage comparison chart">
+              <text x="25" y="32" font-size="16" font-weight="700" fill="#212529">Prototype outcome: time saved by structured triage</text>
+              <line x1="120" y1="65" x2="120" y2="270" stroke="#adb5bd"></line>
+              <line x1="120" y1="270" x2="760" y2="270" stroke="#adb5bd"></line>
+
+              <text x="30" y="125" font-size="14" fill="#343a40">Manual / ad hoc</text>
+              <rect x="120" y="98" width="480" height="34" fill="#868e96" rx="8"></rect>
+              <text x="610" y="120" font-size="13" fill="#212529">42 min avg. first classification</text>
+
+              <text x="30" y="205" font-size="14" fill="#343a40">Structured workbench</text>
+              <rect x="120" y="178" width="278" height="34" fill="#212529" rx="8"></rect>
+              <text x="408" y="200" font-size="13" fill="#212529">18 min avg. first classification</text>
+            </svg>
+            <div class="viz-caption">
+              The improvement came from front-loading the right checks, not from doing more analysis.
+            </div>
+          </div>
+
+          <h2 class="section-heading">A support engineer’s communication layer</h2>
+          <p>
+            Good troubleshooting is only half the job. The other half is being able to explain the issue clearly, preserve trust, and tell the customer exactly what is happening next. I like structuring customer-facing updates in three parts: what we observed, what it means, and what action is needed.
+          </p>
+
+<pre><code>Observed:
+The sync jobs are running, but a subset of requests are returning 403 errors.
+
+Meaning:
+The integration itself is available, but the service account is no longer authorized
+for some repositories after a recent permission change.
+
+Next step:
+Please validate read access for the service account on the affected repos.
+Once those permissions are restored, the existing sync jobs should succeed
+without any product-side change.
+</code></pre>
+
+          <p>
+            That style keeps the explanation technical enough for engineering teams, but still direct and useful for customers who want clarity more than jargon.
+          </p>
+
+          <h2 class="section-heading">Why this project matters</h2>
+          <p>
+            I like projects like this because they sit right at the intersection of systems thinking and customer empathy. You need enough technical depth to move across Linux, Kubernetes, APIs, Git integrations, and databases — but you also need the discipline to document patterns, improve tooling, and make future investigations easier for the whole team.
+          </p>
+          <p>
+            That is the kind of work I enjoy most: investigating ambiguous issues, testing the obvious explanation without getting trapped by it, and turning repeated failure modes into better workflows, better docs, and better customer outcomes.
+          </p>
+
+          <div class="callout">
+            <div class="mini-title">Key takeaway</div>
+            <p class="mb-0">
+              The strongest support organizations do more than close tickets. They build feedback loops that make the product, the documentation, and the investigation path better every time an issue repeats.
+            </p>
+          </div>
+
+          <h2 class="section-heading">Conclusion</h2>
+          <p>
+            This incident triage workbench is a compact example of how I think about technical support engineering: start from the symptom, validate the system layer by layer, compare evidence rather than assumptions, and leave behind a reusable trail for the next engineer. In environments built on distributed systems, code-host integrations, and fast-moving product changes, that structure is often the difference between a noisy ticket queue and a support team that actually scales.
+          </p>
+          <p>
+            Thanks for reading.
+          </p>
+          <p class="small-note">
+            All examples above are presented as an anonymized support engineering case study focused on troubleshooting workflow design.
+          </p>
+
         </div>
       </div>
     </div>
